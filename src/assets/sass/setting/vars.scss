@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=McLaren&display=swap');
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+:root {
+  // 폰트 설정
+  --mc:"McLaren";
+  --pretendard:"Pretendard-Regular";
+
+  // 컬러 설정
+  --background: #FFFFFF;
+  --main: #6177F0;
+  --gray01: #F2F2F2;
+  --gray02: #E9E9E9;
+  --gray03: #828282;
+  --gray04: #333333;
+  --black: #000000;
+  --none: #00000000;
+
+  // 폰트 세팅
+  color: var(--gray04);
+  font-family: var(--mainfont);
+  font-size: 16px;
+  font-weight: 400;
+
+  // 폰트 최적화
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
