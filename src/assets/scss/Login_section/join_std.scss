@@ -1,0 +1,66 @@
+//Join_student
+.join-std-box1{
+    width: 359px;
+    margin-left: 31px;
+  }
+  .join-std-box2{
+    width: 359px;
+    margin-left: 31px;    
+    margin-bottom: 290px;
+  }
+.back{
+  display: flex;
+  justify-content: flex-start; 
+  margin-bottom: 146px;
+}
+p{
+  display: flex;
+  justify-content: flex-start;     
+font-weight: 400;
+font-size: 24px;
+letter-spacing: -2%;
+text-align: center;
+margin: 0;
+}
+h1{
+  display: flex;
+  justify-content: flex-start; 
+font-weight: 500;
+font-size: 13px;
+letter-spacing: 0%;
+color: #6C6C6C;
+margin-top: 28px;
+}
+.korean{
+width: 330px;
+height: 62px;
+border-radius: 20px;
+border-width: 1px;
+gap: 10px;
+margin-bottom: 17px;
+margin-top: 42px; 
+background-color: white;
+color: black;
+&:hover {
+    background-color: #6177F0;
+    color: white;
+  }
+}
+.korean.active, .foreigner.active {
+  background-color: #6177F0;
+  color: white;
+}
+
+.foreigner{
+width: 330px;
+height: 62px;
+border-radius: 20px;
+border-width: 1px;
+gap: 10px;
+background-color: white;
+color: black;
+&:hover {
+    background-color: #6177F0;
+    color: white;
+  }
+}

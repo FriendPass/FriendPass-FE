@@ -1,0 +1,19 @@
+@charset "UTF-8";
+
+// setting
+@use "./common.scss";
+
+// mainsection
+@use "../scss/Login_section/language.scss";
+@use "../scss/Login_section/login.scss";
+@use "../scss/Login_section/join_std.scss";
+@use "../scss/Login_section/join_unv.scss";
+@use "../scss/Login_section/join_nation.scss";
+@use "../scss/Login_section/join.scss";
+@use "../scss/Login_section/interest_choice.scss";
+@use "../scss/Matching_section/matching.scss";
+@use "../scss/Matching_section/matched.scss";
+@use "../scss/mainscss/modal.scss";
+@use "../scss/Mypage_section/mypage.scss";
+@use "../scss/Mypage_section/profile.scss";
+

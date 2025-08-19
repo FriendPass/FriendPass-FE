@@ -1,0 +1,93 @@
+//Join_unv
+.join-unv-box1{
+    width: 359px;
+    margin-left: 31px;
+  }
+.join-unv-box2{
+   width: 340px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+}
+.back{
+  display: flex;
+  justify-content: flex-start; 
+  margin-bottom: 146px;
+}
+
+p{
+  display: flex;
+  justify-content: flex-start;     
+font-weight: 400;
+font-size: 24px;
+letter-spacing: -2%;
+text-align: center;
+margin: 0;
+}
+
+h1{
+  display: flex;
+  justify-content: flex-start; 
+font-weight: 500;
+font-size: 13px;
+letter-spacing: 0%;
+color: #6C6C6C;
+margin-top: 28px;
+}
+
+.join-unv-choice{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 17px;
+    margin-top: 18px;
+    position: relative;
+width: 294px;
+height: 50px;
+border-radius: 10px;
+border-width: 1px;
+border: solid 1px;
+}
+
+.join-unv-okbtn{
+width: 327px;
+height: 48px;
+margin-top: 355px;
+border-radius: 24px;
+border: solid 1px;
+background-color: white;
+color: black;
+&:hover {
+    background-color: #6177F0;
+    color: white;
+  }
+}
+
+
+.school-list {
+    position: absolute;
+    top: 100%;
+  margin-top: 42px; /* input 바로 아래 */
+  left: 0;
+  width: 327px;
+  max-height: 150px; /* 높이 제한 */
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  background-color: white;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 10;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.school-list li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.school-list li:hover {
+  background-color: #f0f0f0;
+}
