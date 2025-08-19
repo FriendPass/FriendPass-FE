@@ -1,0 +1,13 @@
+@charset "UTF-8";
+
+//setting
+@import "setting/vars";
+@import "setting/resets";
+@import "setting/common";
+
+
+
+//section
+@import "section/navsection";
+@import"section/chatsection";
+@import"section/ranksection"; 

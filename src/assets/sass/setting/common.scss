@@ -10,14 +10,17 @@ body {
     align-items: center;
 }
 
-.container {
+.wrap {
     overflow-x: hidden;
     overflow-y: scroll;
     width: 390px;
-    min-height: 844px;
-    height: 100vh;
+    height: 844px;
     margin: 0 auto;
     background-color: var(--white);
+}
+
+::-webkit-scrollbar {
+    display: none;
 }
 
 .none {

@@ -1,15 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=McLaren&display=swap');
 @font-face {
-    font-family: 'Pretendard-Regular';
-    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
+  font-family: 'Pretendard Variable';
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+  src: url('../../../../public/fonts/PretendardVariable.woff2') format('woff2-variations');
 }
 
 :root {
   // 폰트 설정
-  --mc:"McLaren";
-  --pretendard:"Pretendard-Regular";
+  --mainfont: "Pretendard Variable", sans-serif;
 
   // 컬러 설정
   --background: #f6f6f6;
@@ -22,10 +22,11 @@
   --none: #00000000;
 
   // 폰트 세팅
-  color: var(--gray04);
+  color: var(--black);
   font-family: var(--mainfont);
   font-size: 16px;
   font-weight: 400;
+  letter-spacing: -2%;
 
   // 폰트 최적화
   font-synthesis: none;
