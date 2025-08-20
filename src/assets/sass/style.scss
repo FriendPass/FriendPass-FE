@@ -1,0 +1,27 @@
+@charset "UTF-8";
+
+@use "../sass/Login_section/language.scss";
+@use "../sass/Login_section/login.scss";
+@use "../sass/Login_section/join_std.scss";
+@use "../sass/Login_section/join_unv.scss";
+@use "../sass/Login_section/join_nation.scss";
+@use "../sass/Login_section/join.scss";
+@use "../sass/Login_section/interest_choice.scss";
+@use "../sass/Matching_section/matching.scss";
+@use "../sass/Matching_section/matched.scss";
+@use "../sass/mainscss/modal.scss";
+@use "../sass/Mypage_section/mypage.scss";
+@use "../sass/Mypage_section/profile.scss";
+
+
+//setting
+@import "setting/vars";
+@import "setting/resets";
+@import "setting/common";
+
+
+
+//section
+@import "section/navsection";
+@import"section/chatsection";
+@import"section/ranksection"; 

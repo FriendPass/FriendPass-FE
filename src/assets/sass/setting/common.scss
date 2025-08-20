@@ -1,0 +1,40 @@
+button,
+a {
+    cursor: pointer;
+}
+a{
+    text-decoration-line: none;
+    color: black;
+}
+body {
+    background-color: #404040;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wrap {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    width: 390px;
+    height: 844px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    background-color: #fff;
+    flex-direction: column;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.none {
+    display: none !important;
+}
+
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,0 +1,131 @@
+.agree-wrap, .certify-wrap{
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;
+width: 335px;
+height: 281px;
+border-radius: 12px;
+background-color: #fff;
+gap: 25px;
+}
+.agree-box1{
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;
+gap: 12px;
+padding-top: 28px;
+}
+.agree-box2{
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column; 
+gap: 8px;   
+margin-bottom: 10px;
+}
+.agree-box3, .certify-box2{
+width: 335px;
+height: 54px;
+border-bottom-right-radius: 10px;
+border-bottom-left-radius: 10px;
+background-color: #6177F0; 
+display: flex;
+justify-content: center;
+align-items: center;
+cursor: pointer;
+}
+.certify-close{
+margin-top: 16px;
+margin-left: 290px;
+}
+.certify-box1{
+margin: 38px 0;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+gap: 19px;
+}
+.agree-p1, .certify-p1{
+font-weight: 600;
+font-size: 18px;
+text-align: center;
+}
+.agree-p2, .certify-p2{
+font-weight: 500;
+font-size: 14px;
+text-align: center;
+color: #888888;
+}
+.agree-p3, .certify-p3{
+font-weight: 600;
+font-size: 20px;
+text-align: center;
+color: #fff;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5); /* 배경 반투명 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* 최상단 */
+}
+
+.modal-content {
+    margin-bottom: 100px;
+  background: white;
+  border-radius: 12px;
+  z-index: 1000;
+}
+
+//축하
+.yougetreward-wrap{
+display: flex;
+flex-direction: column;
+gap: 40px;
+}
+.yougetreward-box1, .yougetreward-box2{
+display: flex;
+flex-direction: column;
+align-items: start;
+width: 290px;
+}
+.yougetreward-box3{
+display: flex;
+justify-content: center;
+align-items: center;
+}
+.yougetreward-p1{
+display: flex;
+gap: 5px;
+font-weight: 500;
+font-size: 24px;
+line-height: 100%;
+}
+.yougetreward-box3 > img{
+width: 174px;
+height: 174px;
+
+}
+.yougetreward-wrap{
+margin-top: 150px;
+}
+.yougetreward-btn{
+  margin-top: 130px;
+width: 327px;
+height: 48px;
+border-radius: 24px;
+background-color: #6177F0;
+color: #fff;
+font-weight: 600;
+font-size: 16px;
+text-align: center;
+border: none;
+}

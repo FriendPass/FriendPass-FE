@@ -1,25 +1,88 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useMemo } from 'react';
+import { BrowserRouter, Router, Routes, Route, useParams, useLocation, Navigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
-function App() {
+
+import ChatList from './components/chat_section/List';
+import ChatInfo from './components/chat_section/Info';
+import LiveChat from './components/chat_section/LiveChat';
+import SocketProvider from './socket/SocketProvider';
+import Ranking from './components/ranking_section/Ranking';
+import ReportProfile from './components/chat_section/ReportProfile';
+import LayoutNoNav from './components/nav_section/LayoutNoNav'
+import LayoutwithNav from './components/nav_section/LayoutwithNav'
+
+
+import Home from './components/Home';
+import Login from './components/Login_section/Login';
+import JoinStudent from './components/Login_section/Join_student';
+import JoinUnv from './components/Login_section/Join_unv';
+import JoinNation from './components/Login_section/Join_natoin';
+import Join from './components/Login_section/Join'
+import InterestChoice from './components/Login_section/Interest_choice'
+import Language from './components/Login_section/Language'
+import Agree from './components/modal/Agree'
+import Matching from './components/Matching_section/Matching';
+import Matched from './components/Matching_section/Matched';
+import Certify from './components/modal/Certify';
+import Yougetreward from './components/Matching_section/Yougetreward';
+import Mypage from './components/Mypage_section/Mypage';
+import Profile from './components/Mypage_section/Profile';
+import ModifyInterest from './components/Mypage_section/Modify_Interest';
+import ModifyLanguage from './components/Mypage_section/Modify_Language';
+
+function useUserId() {
+  return useMemo(() => {
+    let id = localStorage.getItem('user_id');
+    if (!id) { id = uuidv4(); localStorage.setItem('user_id', id); }
+    return id;
+  }, []);
+}
+
+function LiveChatPage({ userId }) {
+  const { roomId } = useParams();
+  return <LiveChat roomId={roomId} userId={userId} />;
+}
+
+export default function App() {
+  const userId = useUserId();
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <SocketProvider userId={userId}>
+        <Routes>
+          <Route element={<LayoutwithNav />}>
+            <Route path="/ranking" element={<Ranking />} />
+            <Route path="/chatList" element={<ChatList />} />
+          </Route>
+
+          <Route element={<LayoutNoNav />}>
+          <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Home />} />
+            <Route path="/chat/:roomId" element={<LiveChat userId={userId} />} />
+            <Route path="/reportprofile" element={<ReportProfile />} />
+            <Route path="/chatInfo" element={<ChatInfo />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/language" element={<Language />} />
+            <Route path="/agree" element={<Agree />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/joinUnv" element={<JoinUnv />} />
+            <Route path="/joinStudent" element={<JoinStudent />} />
+            <Route path="/joinNation" element={<JoinNation />} />
+            <Route path="/join" element={<Join />} />
+            <Route path="/interestChoice" element={<InterestChoice />} />
+            <Route path="/matching" element={<Matching />} />
+            <Route path="/matched" element={<Matched />} />
+            <Route path="/certify" element={<Certify />} />
+            <Route path="/yougetReward" element={<Yougetreward />} />
+            <Route path="/mypage" element={<Mypage />} />
+            <Route path="/modifyInterest" element={<ModifyInterest />} />
+            <Route path="/modifyLanguage" element={<ModifyLanguage />} />
+          </Route>
+        </Routes>
+      </SocketProvider>
+    </BrowserRouter>
   );
 }
 
-export default App;
+

@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=McLaren&display=swap');
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+  src: url('../../../../public/fonts/PretendardVariable.woff2') format('woff2-variations');
+}
+
+:root {
+  // 폰트 설정
+  --mainfont: "Pretendard Variable", sans-serif;
+
+  // 컬러 설정
+  --background: #f6f6f6;
+  --main: #6177F0;
+  --gray01: #F2F2F2;
+  --gray02: #E9E9E9;
+  --gray03: #828282;
+  --gray04: #333333;
+  --black: #000000;
+  --none: #00000000;
+
+  // 폰트 세팅
+  color: var(--black);
+  font-family: var(--mainfont);
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -2%;
+
+  // 폰트 최적화
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
