@@ -7,8 +7,8 @@ function Interest_choice(){
 const [activeIndexes, setActiveIndexes] = React.useState([]); // 배열로 상태 관리
 const navigate = useNavigate();
 
-const buttons = ['전통문화', '사진', '박물관', '전시', '공예', '맛집','카페', '전통시장', '요리', '문화체험',
-  '그림', '산책', '쇼핑', '음악', '게임', '언어교환', '역사', '건축', '자연','운동','책/독서', '패션', '영화', '축제', '반려동물', '힐링'];
+const buttons = ['전통문화','전시', '맛집','카페','이색문화체험',
+'산책', '쇼핑', 'K-pop', '역사','패션', '힐링'];
 
 const toggleActive = (idx) => {
   if (activeIndexes.includes(idx)) {

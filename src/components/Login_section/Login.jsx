@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../../api/auth'; 
 
-function Login({ onLogin }) {
+function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate(); 
 
+  localStorage.removeItem('accessToken')
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await login(email, password);
+
+      // 로그인 성공 시 토큰과 사용자 정보 저장
+      const { accessToken, user: userData } = res.data;
+      localStorage.setItem('accessToken', accessToken);
+
       console.log('로그인 성공:', res.data);
-       onLogin(res.data);
-      // 로그인 성공 시 상위 컴포넌트에 알림
-      onLogin(res.data);
+      navigate('/matching');
+
     } catch (err) {
       console.error('로그인 실패:', err.response?.data || err.message);
       alert('로그인에 실패했습니다.');

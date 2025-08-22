@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { logout } from "../../api/auth"; // 경로 맞게 수정 필요
 import { deleteUser, getMyProfile } from "../../api/users";
 import { useNavigate } from "react-router-dom";
+import DefaultProfile from "../../assets/img/basicprofile.png";
 
 const Mypage = () => {
   const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState(null);
+  const [nickname, setNickname] = useState(''); 
 
     // 마운트 시 유저 프로필 불러오기
   useEffect(() => {
@@ -13,6 +15,7 @@ const Mypage = () => {
       try {
         const data = await getMyProfile();
         setProfileImage(data.profileImage); // 필드명: profileImage
+        setNickname(data.nickname); 
       } catch (error) {
         console.error("프로필 불러오기 실패:", error);
       }
@@ -38,7 +41,7 @@ const Mypage = () => {
     try {
       await deleteUser();
       alert("회원탈퇴가 완료되었습니다.");
-      navigate("/signup"); // 탈퇴 후 회원가입/홈으로 이동
+      navigate("/login"); // 탈퇴 후 회원가입/홈으로 이동
     } catch (error) {
       console.error("회원탈퇴 실패:", error);
       alert("회원탈퇴 중 문제가 발생했습니다.");
@@ -51,22 +54,18 @@ const Mypage = () => {
             <p className='mypage-p1'>마이페이지</p>
             <div className="mypage-box1">
             <div className="mypage-profile">
-            {profileImage ? (
-              <img
-                src={profileImage}
-                alt="프로필 이미지"
-                style={{
-                  width: "100px",
-                  height: "100px",
-                  borderRadius: "18px",
-                  objectFit: "cover",
-                }}
-              />
-            ) : (
-              <p></p>
-            )}
+  <img
+    src={profileImage || DefaultProfile}
+    alt="프로필 이미지"
+    style={{
+      width: "83px",
+      height: "77.5px",
+      borderRadius: "18px",
+      objectFit: "cover",
+    }}
+  />
           </div>
-                <p className='mypage-p2'>어피치</p>
+                <p className='mypage-p2'>{nickname}</p>
             </div>
             <div className="mypage-box2">
                <a href="/profile" className="mypage-p2">프로필 설정</a>
@@ -85,7 +84,7 @@ const Mypage = () => {
 <p>매칭</p>
         </div>
         </a>
-        <a href="/chatting">
+        <a href="/chatList">
         <div className="menu-chat">
           <svg width="34" height="29" viewBox="0 0 34 29" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M29.75 13.8958C29.7549 15.4906 29.318 17.0639 28.475 18.4875C27.4754 20.1933 25.9388 21.6281 24.0372 22.6312C22.1356 23.6342 19.9442 24.1659 17.7083 24.1666C15.8385 24.1708 13.994 23.7982 12.325 23.0791L4.25 25.375L6.94167 18.4875C6.09865 17.0639 5.66179 15.4906 5.66667 13.8958C5.66753 11.9888 6.29087 10.1196 7.46685 8.49764C8.64284 6.87569 10.325 5.56503 12.325 4.71247C13.994 3.99343 15.8385 3.62082 17.7083 3.62497H18.4167C21.3695 3.76392 24.1585 4.82698 26.2496 6.61059C28.3408 8.39421 29.5871 10.7731 29.75 13.2916V13.8958Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
@@ -93,7 +92,7 @@ const Mypage = () => {
 <p>채팅</p> 
         </div>
         </a>
-        <a href="/lack">
+        <a href="/ranking">
         <div className="menu-lank">
           <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M10.6045 17.9413L9.04159 29.7084L15.4999 25.8334L21.9583 29.7084L20.3953 17.9284M24.5416 10.3334C24.5416 15.3269 20.4935 19.375 15.4999 19.375C10.5063 19.375 6.45825 15.3269 6.45825 10.3334C6.45825 5.33978 10.5063 1.29169 15.4999 1.29169C20.4935 1.29169 24.5416 5.33978 24.5416 10.3334Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>

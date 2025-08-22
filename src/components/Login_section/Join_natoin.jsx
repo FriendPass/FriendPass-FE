@@ -10,23 +10,26 @@ const [query, setQuery] = useState('');
 const [filteredNationalities, setFilteredNationalities] = useState([]);
 const [selectedNationality, setSelectedNationality] = useState('');
 
-// 컴포넌트 마운트 시 CSV 불러오기
-useEffect(() => {
-  Papa.parse('/nation.csv', {  // 국적 csv파일 경로
-    download: true,
-    header: true,
-    complete: (results) => {
-      const nationalityNames = results.data
-        .map((row) => row['한글 국가명'])  // csv 안에 '국적명' 컬럼 있어야 함
-        .filter(Boolean);
-      const uniqueNames = [...new Set(nationalityNames)];
-      setNationalities(uniqueNames);
-    },
+  // CSV 불러오기
+  useEffect(() => {
+    Papa.parse('/nation.csv', {
+      download: true,
+      header: true,
+      complete: (results) => {
+        const nationalityData = results.data
+          .map((row) => ({
+            krName: row['한글 국가명']?.trim(),
+            enName: row['영문 국가명']?.trim(),
+            code: row['국가코드(ISO 2자리)']?.trim(),
+          }))
+          .filter(row => row.enName && row.code); // 둘 다 존재하는 행만
+        setNationalities(nationalityData);
+      },
       error: (error) => console.error('CSV 로딩 실패:', error),
     });
-}, []);
+  }, []);
 
-// 입력 변화 시 필터링
+  // 입력 변화 시 필터링 (영문 이름 기준)
   const handleInputChange = (e) => {
     const val = e.target.value;
     setQuery(val);
@@ -36,37 +39,36 @@ useEffect(() => {
       return;
     }
 
-    setFilteredNationalities(
-      nationalities.filter((nat) =>
-        nat.toLowerCase().includes(val.toLowerCase())
-      )
-    );
+setFilteredNationalities(
+  nationalities.filter(
+    (nat) =>
+      (nat.krName && nat.krName.toLowerCase().includes(val.toLowerCase())) ||
+      (nat.enName && nat.enName.toLowerCase().includes(val.toLowerCase()))
+  )
+);
   };
 
   const handleShowANationalities = () => setFilteredNationalities(nationalities);
 
-  const handleSelectNationality = (natName) => {
-    setSelectedNationality(natName);
-    setQuery(natName);
-    setFilteredNationalities([]);
-  };
+// 선택
+const handleSelectNationality = (nat) => {
+  setSelectedNationality(nat.code); // 국가코드만 상태에 저장
+  setQuery(`${nat.krName} - ${nat.enName} (${nat.code})`); // 검색창에는 이름+코드 표시
+  setFilteredNationalities([]);
+};
 
-  // 확인 버튼 클릭 시 axios PUT 요청
-  const handleConfirm = async () => {
-    if (!selectedNationality) {
-      alert('국적을 선택해주세요.');
-      return;
-    }
+// 확인 버튼 클릭 → localStorage에 저장
+const handleConfirm = () => {
+  if (!selectedNationality) {
+    alert('국적을 선택해주세요.');
+    return;
+  }
 
-    try {
-      await updateNationality(selectedNationality); // user.js 함수 호출
-      alert(`국적이 저장되었습니다: ${selectedNationality}`);
-      navigate('/join'); // 저장 후 회원가입 페이지로 이동
-    } catch (error) {
-      console.error('국적 저장 실패:', error.response?.data || error.message);
-      alert('국적 저장에 실패했습니다.');
-    }
-  };
+  // 국가코드만 저장
+  localStorage.setItem('selectedNationality', selectedNationality);
+  alert(`국적 코드가 저장되었습니다: ${selectedNationality}`);
+  navigate('/join'); // 최종 회원가입 페이지로 이동
+};
 
   return (
     <div className='wrap'>
@@ -91,6 +93,7 @@ useEffect(() => {
         value={query}
         onChange={handleInputChange}
         style={{height: '25px', backgroundColor: 'white',color: 'black',}}
+        placeholder="Search"
       />
       <svg className='join-nation-find' 
       onClick={handleShowANationalities}
@@ -98,18 +101,19 @@ useEffect(() => {
 <line x1="0.5" y1="-0.5" x2="9.74781" y2="-0.5" transform="matrix(0.58549 0.81068 -0.701028 0.713134 0 1)" stroke="#888888" strokeLinecap="round"/>
 <line x1="0.5" y1="-0.5" x2="9.74781" y2="-0.5" transform="matrix(-0.58549 0.81068 0.701028 0.713134 12 1)" stroke="#888888" strokeLinecap="round"/>
 </svg>
-    {filteredNationalities.length > 0 && (
-      <ul className="nationality-list">
-        {filteredNationalities.map((nat) => (
-          <li
-            key={nat}
-            onClick={() => handleSelectNationality(nat)}
-          >
-            {nat}
-          </li>
-        ))}
-      </ul>
-    )}
+{filteredNationalities.length > 0 && (
+  <ul className="nationality-list">
+    {filteredNationalities.map((nat, index) => (
+      <li
+        key={index}
+        onClick={() => handleSelectNationality(nat)} 
+      >
+        {nat.krName} - {nat.enName}({nat.code})
+      </li>
+    ))}
+  </ul>
+)}
+
   </div>
   <button className='join-nation-okbtn' onClick={handleConfirm}>
     확인

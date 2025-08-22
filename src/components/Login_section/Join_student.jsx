@@ -1,23 +1,30 @@
 import React, { useState }  from 'react'
 import { useNavigate } from "react-router-dom";
-import { updateNationality } from '../../api/auth'; 
 
 function Join_student() {
     // 사용자가 선택한 국적 상태 저장
   const [nationality, setNationality] = useState("");
   const navigate = useNavigate();
 
+
   // 버튼 클릭 핸들러
-  const handleSelect = async (nationChoice, countryName) => {
+  const handleSelect = (nationChoice, isExchangeValue) => {
     setNationality(nationChoice);
 
-    try {
-      await updateNationality(countryName); // axios PUT 요청
-      console.log('국적 저장 성공:', countryName);
-      navigate("/join"); // 저장 후 회원가입 페이지로 이동
-    } catch (error) {
-      console.error('국적 저장 실패:', error.response?.data || error.message);
-      alert('국적 저장에 실패했습니다.');
+    // localStorage에 저장
+    if (nationChoice === '한국인') {
+      localStorage.setItem('selectedNationality', 'KR'); // 한국 학생이면 KR
+      localStorage.setItem('isExchange', JSON.stringify(false));
+    } else if (nationChoice === '외국인') {
+      localStorage.setItem('selectedNationality', ''); // 국적은 나중에 선택
+      localStorage.setItem('isExchange', JSON.stringify(true));
+    }
+
+    // 다음 페이지로 이동
+    if (nationChoice === '한국인') {
+      navigate("/join"); // 바로 회원가입 페이지
+    } else {
+      navigate("/joinNation"); // 국적 선택 페이지로 이동
     }
   };
   

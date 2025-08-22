@@ -10,7 +10,13 @@ function Join() {
   const [emailSent, setEmailSent] = useState(false);
   const navigate = useNavigate();
 
-  const isFormValid = email && code && password && nickname;
+  // 이전 페이지에서 선택한 값 불러오기
+  const [nationalityCode, setNationalityCode] = useState(localStorage.getItem('selectedNationality') || '');
+  const [schoolId, setSchoolId] = useState(localStorage.getItem('selectedSchoolId') || '');
+  const [isExchange, setIsExchange] = useState(JSON.parse(localStorage.getItem('isExchange') || 'false'));
+  const [language, setLanguage] = useState(localStorage.getItem('language') || 'ko');
+
+  const isFormValid = email && code && password && nickname && nationalityCode && schoolId;
 
   // 이메일 인증번호 발송
   const handleSendCode = async (e) => {
@@ -25,21 +31,32 @@ function Join() {
     }
   };
 
-
   // 회원가입 처리
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!isFormValid) {
+      alert('모든 필드를 입력해주세요.');
+      return;
+    }
+
     try {
       // 1. 인증번호 검증
-      await verifyEmailCode(email, code); // 인증번호 확인
-      // 실패 시 catch로 넘어감
+      await verifyEmailCode(email, code);
 
-      // 2. 회원가입 요청
-      await signup(email, password, nickname);
+      // 2. 회원가입 요청 (한 번에 모든 데이터 전달)
+      await signup({
+        email,
+        password,
+        nickname,
+        nationalityCode,
+        schoolId,
+        isExchange,
+        language,
+      });
 
-      alert('가입 성공');
-      navigate('/interestChoice');
+      alert('회원가입 성공!');
+      navigate('/interest');
     } catch (err) {
       console.error(err.response?.data || err.message);
       alert('회원가입 처리 중 오류가 발생했습니다.');

@@ -24,7 +24,7 @@ export const updateNickname = async (nickname) => {
 // 프로필 이미지 업로드
 export const updateProfileImage = async (imageFile) => {
   const formData = new FormData();
-  formData.append("profileImage", imageFile);
+  formData.append("imageUrl", imageFile);
 
   const res = await api.put("/users/me/profile-image", formData, {
     headers: {
@@ -32,6 +32,17 @@ export const updateProfileImage = async (imageFile) => {
     },
   });
   return res.data;
+};
+
+// 프로필 이미지 삭제
+export const deleteProfileImage = async () => {
+  try {
+    const response = await api.delete("/users/me/profile-image");
+    return response.data;
+  } catch (err) {
+    console.error("프로필 이미지 삭제 실패:", err);
+    throw err;
+  }
 };
 
 // 내 관심사 조회

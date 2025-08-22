@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {
-  getMyProfile,
-  updateNickname,
-  updateProfileImage,
-} from "../../api/users";
+import {getMyProfile, updateNickname, updateProfileImage, deleteProfileImage} from "../../api/users";
+import DEFAULT_PROFILE_IMAGE from "../../assets/img/basicprofile.png";
 
 const Profile = () => {
   const [nickname, setNickname] = useState("");
-  const [university, setUniversity] = useState("");
-  const [nation, setNation] = useState("");
-  const [previewImage, setPreviewImage] = useState(null);
+  const [schoolName, setSchoolName] = useState(""); // 학교 이름
+  const [nationalityName, setNationalityName] = useState(""); 
+const [previewImage, setPreviewImage] = useState(DEFAULT_PROFILE_IMAGE);
   const [selectedImage, setSelectedImage] = useState(null);
+  
 
   useEffect(() => {
     // 페이지 로드 시 내 정보 가져오기
@@ -18,10 +16,11 @@ const Profile = () => {
       try {
         const data = await getMyProfile();
         setNickname(data.nickname);
-        setUniversity(data.university);
-        setNation(data.nation);
-        if (data.profileImageUrl) {
-          setPreviewImage(data.profileImageUrl);
+        setSchoolName(data.schoolName); // 응답 필드명: schoolName
+        setNationalityName(data.nationalityNameKo);
+
+        if (data.profileImage) {
+          setPreviewImage(data.profileImage); // 응답 필드명: profileImage
         }
       } catch (err) {
         console.error(err);
@@ -35,6 +34,19 @@ const Profile = () => {
     if (file) {
       setSelectedImage(file);
       setPreviewImage(URL.createObjectURL(file));
+    }
+  };
+
+  const handleDeleteImage = async () => {
+    if (!window.confirm("프로필 사진을 삭제하시겠습니까?")) return;
+    try {
+      await deleteProfileImage(); // DELETE 호출
+      setSelectedImage(null);
+      setPreviewImage(DEFAULT_PROFILE_IMAGE);
+      alert("프로필 사진이 삭제되었습니다.");
+    } catch (err) {
+      console.error(err);
+      alert("삭제 중 문제가 발생했습니다.");
     }
   };
 
@@ -78,8 +90,11 @@ const Profile = () => {
                 <span>+</span>
               )}
             </div>
-            <p className="profile-p2">사진 변경</p>
+            <span className="profile-p2">사진 변경</span>
           </label>
+              <span className="profile-p2" style={{ color: "red", cursor: "pointer" }} onClick={handleDeleteImage}>
+                삭제
+              </span>
           <input
             type="file"
             id="profileImageUpload"
@@ -102,13 +117,13 @@ const Profile = () => {
           <div className="profile-unv">
             <p className='profile-p2'>학교</p>
             <div className='profile-unv-done'>
-              <p className='profile-p2'>성신</p>
+              <p className='profile-p2'>{schoolName}</p>
             </div>
           </div>
           <div className="profile-nation">
             <p className='profile-p2'>국적</p>
             <div className='profile-nation-done'>
-              <p className='profile-p2'>성신여대</p>
+              <p className='profile-p2'>{nationalityName}</p>
             </div>
           </div>          
         </div>

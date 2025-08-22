@@ -2,8 +2,13 @@ import api from './api';
 
 // 로그인
 export const login = (email, password) => {
-  return api.post('/auth/login', { email, password });
+  return api.post(
+    '/auth/login',
+    { email, password },
+    { headers: { Authorization: '' } } // 로그인 요청에서는 헤더 제거
+  );
 };
+
 //로그아웃
 export const logout = async () => {
   try {
@@ -12,15 +17,6 @@ export const logout = async () => {
   } catch (error) {
     throw error;
   }
-};
-//학교 저장
-export const updateSchool = (schoolName) => {
-  return api.put('/auth/login', { school: schoolName });
-};
-
-// 국적 저장
-export const updateNationality = (country) => {
-  return api.put('/auth/login', { nationality: country });
 };
 
 // 이메일 인증번호 발송

@@ -1,35 +1,29 @@
 import React, {useState, useEffect} from 'react'
 import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
-import { updateSchool } from '../../api/auth';
 
 function Join_unv() {
   const navigate = useNavigate();
   const [schools, setSchools] = useState([]);
   const [query, setQuery] = useState('');
   const [filteredSchools, setFilteredSchools] = useState([]);
-  const [selectedSchool, setSelectedSchool] = useState('');
-  const [savedSchool, setSavedSchool] = useState(null);
+  const [selectedSchool, setSelectedSchool] = useState(null);
 
-  // 컴포넌트 마운트 시 CSV 불러오기
-useEffect(() => {
-  Papa.parse('/unv.csv', {
-    download: true,
-    header: true,
-    complete: (results) => {
-      const schoolNames = results.data
-        .map((row) => row['학교명'])
-        .filter(Boolean) // 빈 값 제거
-        .filter(name => !name.includes('대학원')); // '대학원' 포함된 항목 제외
-
-      const uniqueNames = [...new Set(schoolNames)]; // 중복 제거
-      setSchools(uniqueNames);
-    },
-    error: (error) => {
-      console.error('CSV 로딩 실패:', error);
-    },
-  });
-}, []);
+  // CSV 불러오기
+  useEffect(() => {
+    Papa.parse('/unv.csv', {
+      download: true,
+      header: true,
+      complete: (results) => {
+        const data = results.data
+          .filter(row => row['학교명']); // 빈 값 제거
+        setSchools(data);
+      },
+      error: (error) => {
+        console.error('CSV 로딩 실패:', error);
+      },
+    });
+  }, []);
 
   // 입력 변화 시 필터링
   const handleInputChange = (e) => {
@@ -41,43 +35,41 @@ useEffect(() => {
       return;
     }
 
-    const filtered = schools.filter((school) =>
-      school.toLowerCase().includes(val.toLowerCase())
+    const filtered = schools.filter((row) =>
+      row['학교명'].toLowerCase().includes(val.toLowerCase())
     );
     setFilteredSchools(filtered);
   };
 
-// SVG 클릭 시 ㄱ부터 시작하는 학교 목록 표시
-const handleShowGSchools = () => {
-  setFilteredSchools(schools);
-};
+  // 전체 학교 목록 표시
+  const handleShowGSchools = () => {
+    setFilteredSchools(schools);
+  };
 
   // 학교 선택
-  const handleSelectSchool = (schoolName) => {
-    setSelectedSchool(schoolName);
-    setQuery(schoolName);
+  const handleSelectSchool = (schoolRow) => {
+    setSelectedSchool(schoolRow); // 객체 전체 저장
+    setQuery(schoolRow['학교명']);
     setFilteredSchools([]);
   };
 
-
-  // 확인 버튼 클릭 시 백엔드에 PUT 요청
-  const handleConfirm = async () => {
+  // 확인 버튼 클릭
+  const handleConfirm = () => {
     if (!selectedSchool) {
       alert('학교를 선택해주세요.');
       return;
     }
 
-    try {
-      const response = await updateSchool(selectedSchool); // user.js 함수 호출
-      console.log('학교 저장 성공:', response.data);
-      setSavedSchool(selectedSchool);
-      alert(`학교가 저장되었습니다: ${selectedSchool}`);
-      navigate('/joinStudent');
-    } catch (error) {
-      console.error('학교 저장 실패:', error.response?.data || error.message);
-      alert('학교 저장에 실패했습니다.');
-    }
+    const selectedSchoolId = selectedSchool['아이디'];
+    const signupData = JSON.parse(localStorage.getItem('signupData')) || {};
+    signupData.schoolId = selectedSchoolId; // ID 저장
+    localStorage.setItem('signupData', JSON.stringify(signupData));
+
+    alert(`학교가 선택되었습니다: ${selectedSchool['학교명']}`);
+    navigate('/joinStudent');
   };
+
+
 
   return (
     <div className='wrap'>
@@ -117,7 +109,7 @@ const handleShowGSchools = () => {
               key={school}
               onClick={() => handleSelectSchool(school)}
             >
-              {school}
+              {school['학교명']}
             </li>
           ))}
         </ul>

@@ -1,53 +1,118 @@
 import React, { useState, useEffect } from 'react';
-import { getMyInterests } from "../../api/users";
-import { getMyMatchingMember } from "../../api/matching";
-import { getMyMatchingPlaces } from "../../api/matching";
+import { getMyMatching } from "../../api/matching"; // /matching/status
 import Certify from '../modal/Certify'
+import { certifyLocation } from "../../api/matching";
+import { useNavigate } from "react-router-dom";
 
 const Matched = () => {
-  const [interests, setInterests] = useState([]);
-  const [member, setMember] = useState(null);
-  const [matchingData, setMatchingData] = useState([]);
+  const [showCertify, setShowCertify] = useState(false);
+  const [matchingStatus, setMatchingStatus] = useState(null);
+  const [selectedInterests, setSelectedInterests] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [representativePlaces, setRepresentativePlaces] = useState([]);
+  const navigate = useNavigate();
+  const [locationAgreed, setLocationAgreed] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getMyMatchingPlaces();
-        setMatchingData(data); // [{ interest: '역사', places: [...] }, { interest: '음악', places: [...] }]
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, []);
-  
-  useEffect(() => {
-    const fetchMember = async () => {
-      try {
-        const data = await getMyMatchingMember();
-        // 예: { matchedMember: { profileImage: "...", nickname: "홍길동" } }
-        setMember(data.matchedMember);
-      } catch (error) {
-        console.error("매칭 멤버 조회 실패:", error);
-      }
-    };
-
-    fetchMember();
+    const agreed = localStorage.getItem("locationAgreed");
+    setLocationAgreed(!!agreed);
   }, []);
 
-  //사용자 관심사 불러오기
+  const handleRewardClick = () => {
+    if (!locationAgreed) {
+      alert("위치 정보 제공에 동의해야 인증이 가능합니다.");
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      alert("브라우저에서 위치 정보를 지원하지 않습니다.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const res = await certifyLocation(latitude, longitude);
+          if (res.success) {
+            alert(res.message);
+            navigate("/yougetReward");
+          } else {
+            alert(res.message);
+          }
+        } catch {
+          alert("서버 요청에 실패했습니다.");
+        }
+      },
+      () => alert("위치 정보를 가져오지 못했습니다.")
+    );
+  };
+
   useEffect(() => {
-    const fetchInterests = async () => {
+    const fetchMatchingData = async () => {
       try {
-        const data = await getMyInterests();
-        setInterests(data);
+        const data = await getMyMatching(); // /matching/status
+        const status = data.status || {};
+        const interests = status.selectedInterests || [];
+        const memberList = data.members || [];
+        const places = data.representativePlaces || [];
+
+        setMatchingStatus(status.status); // "수락" 등
+        setSelectedInterests(interests);
+        setMembers(memberList);
+        setRepresentativePlaces(places);
       } catch (err) {
-        console.error("관심사 조회 실패:", err);
+        console.error("매칭 데이터 조회 실패:", err);
       }
     };
 
-    fetchInterests();
+    fetchMatchingData();
+  }, []);
+
+  useEffect(() => {
+    // 더미 데이터
+    const dummyData = {
+      status: {
+        status: "수락",
+        region: "성신",
+        selectedInterests: ["맛집", "전통문화", "산책"]
+      },
+      members: [
+        { userId: 3, name: "오" },
+        { userId: 4, name: "비" },
+        { userId: 5, name: "이" },
+        { userId: 1, name: "락" }
+      ],
+      representativePlaces: [
+        {
+          interest: "맛집",
+          places: [
+            { name: "윤휘식당 성신여대본점", address: "서울 성북구 보문로34길 70 2층", description: "함박스테이크와 다양한 일식 반찬을 함께 제공하는 아늑하고 분위기 좋은 식당" },
+            { name: "고향돌김치삼겹살", address: "서울 성북구 보문로32길 44", description: "한돈을 사용한 고기 퀄리티가 뛰어나며, 삼겹살, 목살, 항정살 모두 기름기와 살코기의 황금비율을 가진 식당" }
+          ]
+        },
+        {
+          interest: "전통문화",
+          places: [
+            { name: "동소문한옥밀집지역", address: "서울 성북구 동소문동2가 43-1", description: "한옥들이 밀집해 있는 한옥 거리" },
+            { name: "한상수자수박물관", address: "서울 성북구 성북로16길 4-10", description: "국가무형문화재 자수장 기능 보유자로, 자수 문화를 알 수 있는 곳" }
+          ]
+        },
+        {
+          interest: "산책",
+          places: [
+            { name: "성북천", address: "서울 성북구 동선동2가", description: "물길과 나무가 조화를 이루어 사계절 내내 휴식을 즐기기 좋은 도심 속 개천" },
+            { name: "고려대학교 서울캠퍼스 본관", address: "서울 성북구 안암로 145", description: "우리나라 최초의 근대적 사립 고등교육기관으로, 산책하기 좋은 고딕양식의 캠퍼스" }
+          ]
+        }
+      ]
+    };
+
+    // 상태 세팅
+    setMatchingStatus(dummyData.status.status);
+    setSelectedInterests(dummyData.status.selectedInterests);
+    setMembers(dummyData.members);
+    setRepresentativePlaces(dummyData.representativePlaces);
   }, []);
 
   return (
@@ -66,28 +131,39 @@ const Matched = () => {
           <p className='matching-p2'>현재 매칭</p>
         </div>
         <div className='matched-box4'>
-          <div className='matched-done'><p className='matching-p3'>매칭이 완료되었어요! 채팅에서 대화해 보세요</p></div>
+          <div className='matched-done'>
+            <p className='matching-p3'>매칭이 완료되었어요! 채팅에서 대화해 보세요</p>
+            <button onClick={handleRewardClick}>인증 및 리워드 받기</button>
+            </div>
           <div className='matched-box5'>
             <p className='matching-p4'>공통 관심사</p>
-          <div className='matched-interest-btn'>
-        {interests.map((interest, idx) => (
-          <button key={idx}>{interest}</button>
-        ))}
-          </div>
+              <div className='matched-interest-btn'>
+                {selectedInterests.map((interest, idx) => (
+                  <button key={idx}>{interest}</button>
+                ))}
+              </div>
           </div>
           <div className='matched-box6'>
           <p className='matching-p4'>장소 추천 리스트</p>
-      {matchingData.map((item, idx) => (
+      {representativePlaces.map((item, idx) => (
         <div key={idx} className="matched-box9">
           {/* 관심사 버튼 */}
           <button>{item.interest}</button>
 
           {/* 장소 리스트 */}
-          <div className="matched-list">
+          <div className="matched-list-box">
             {item.places.map((place, i) => (
-              <div key={i}>
+              <div className='matched-list' key={i}>
                 <p className="matching-p3">{place.name}</p>
+                <div>
+                  <div className='matched-locaion'>
+                  <svg width="9" height="13" viewBox="0 0 9 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M4.5 12.75C4.35417 12.75 4.22917 12.7083 4.125 12.625C4.02083 12.5417 3.94271 12.4323 3.89063 12.2969C3.69271 11.7135 3.44271 11.1667 3.14062 10.6562C2.84896 10.1458 2.4375 9.54688 1.90625 8.85938C1.375 8.17188 0.942708 7.51562 0.609375 6.89062C0.286458 6.26562 0.125 5.51042 0.125 4.625C0.125 3.40625 0.546875 2.375 1.39062 1.53125C2.24479 0.677083 3.28125 0.25 4.5 0.25C5.71875 0.25 6.75 0.677083 7.59375 1.53125C8.44792 2.375 8.875 3.40625 8.875 4.625C8.875 5.57292 8.69271 6.36458 8.32813 7C7.97396 7.625 7.5625 8.24479 7.09375 8.85938C6.53125 9.60938 6.10417 10.2344 5.8125 10.7344C5.53125 11.224 5.29688 11.7448 5.10938 12.2969C5.05729 12.4427 4.97396 12.5573 4.85938 12.6406C4.75521 12.7135 4.63542 12.75 4.5 12.75ZM4.5 6.1875C4.9375 6.1875 5.30729 6.03646 5.60938 5.73438C5.91146 5.43229 6.0625 5.0625 6.0625 4.625C6.0625 4.1875 5.91146 3.81771 5.60938 3.51562C5.30729 3.21354 4.9375 3.0625 4.5 3.0625C4.0625 3.0625 3.69271 3.21354 3.39063 3.51562C3.08854 3.81771 2.9375 4.1875 2.9375 4.625C2.9375 5.0625 3.08854 5.43229 3.39063 5.73438C3.69271 6.03646 4.0625 6.1875 4.5 6.1875Z" fill="#888888"/>
+</svg>
                 <p className="matching-p5">{place.address}</p>
+                </div>
+                <p className="matching-p6">{place.description}</p>
+              </div>
               </div>
             ))}
           </div>
@@ -97,18 +173,30 @@ const Matched = () => {
           <div className="matched-box3">
             <p className='matching-p4'>매칭 멤버</p>
             <div className="matched-box7">
-      {!member ? (
-      <p className='matching-p4'>멤버의 정보를 불러오는 중...</p>
-    ) : (
-      <div className="matched-box8">
-        <img
-          src={member.profileImage || "/default.png"}
-          alt="프로필"
-          style={{ width: "80px", height: "80px", borderRadius: "50%" }}
-        />
-        <p className="matching-p4">{member.nickname}</p>
-      </div>
-    )}
+ {members.length === 0 ? (
+                  <p className='matching-p4'>멤버의 정보를 불러오는 중...</p>
+                ) : (
+                  members.map((m) => (
+                    <div key={m.userId} className="matched-box8">
+                      <img
+                        src={m.profileImage || "/default.png"}
+                        alt=""
+                        style={{ width: "30px", height: "30px", borderRadius: "50%" }}
+                      />
+                      <p className="matching-p4">{m.name}</p>
+                    </div>
+                  ))
+                )}
+          </div>
+          <div className="matched-exit">
+          <button onClick={() => setShowCertify(true)}>매칭종료하기</button>
+          {showCertify && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <Certify onClose={() => setShowCertify(false)} />
+    </div>
+  </div>
+)}
           </div>
           </div>
         </div>
@@ -122,7 +210,7 @@ const Matched = () => {
 </svg>
 <p>매칭</p>
         </div>
-        <a href="chatting">
+        <a href="/chatList">
         <div className="menu-chat">
           <svg width="34" height="29" viewBox="0 0 34 29" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M29.75 13.8958C29.7549 15.4906 29.318 17.0639 28.475 18.4875C27.4754 20.1933 25.9388 21.6281 24.0372 22.6312C22.1356 23.6342 19.9442 24.1659 17.7083 24.1666C15.8385 24.1708 13.994 23.7982 12.325 23.0791L4.25 25.375L6.94167 18.4875C6.09865 17.0639 5.66179 15.4906 5.66667 13.8958C5.66753 11.9888 6.29087 10.1196 7.46685 8.49764C8.64284 6.87569 10.325 5.56503 12.325 4.71247C13.994 3.99343 15.8385 3.62082 17.7083 3.62497H18.4167C21.3695 3.76392 24.1585 4.82698 26.2496 6.61059C28.3408 8.39421 29.5871 10.7731 29.75 13.2916V13.8958Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
@@ -130,7 +218,7 @@ const Matched = () => {
 <p>채팅</p> 
         </div>
         </a>
-        <a href="/lank">
+        <a href="/ranking">
         <div className="menu-lank">
           <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M10.6045 17.9413L9.04159 29.7084L15.4999 25.8334L21.9583 29.7084L20.3953 17.9284M24.5416 10.3334C24.5416 15.3269 20.4935 19.375 15.4999 19.375C10.5063 19.375 6.45825 15.3269 6.45825 10.3334C6.45825 5.33978 10.5063 1.29169 15.4999 1.29169C20.4935 1.29169 24.5416 5.33978 24.5416 10.3334Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>

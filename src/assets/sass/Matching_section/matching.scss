@@ -107,6 +107,9 @@ box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     cursor: not-allowed;
   }
 }
+.matching-btn:hover{
+    background-color: #b6c1ff;
+}
 .footer{
     border-top: solid 1px #888888;
     width: 390px;
@@ -154,4 +157,12 @@ align-items: center;
 justify-content: center;
 flex-direction: column;
 gap: 5px;
+}
+.matching-region-btn > button:hover{
+  background: #6177F0;
+  color: #fff;
+}
+.matching-region-btn > button.selected{
+  background: #6177F0;
+color: white;
 }
