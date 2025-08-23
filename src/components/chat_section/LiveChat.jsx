@@ -2,10 +2,13 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useSocket } from '../../socket/SocketProvider';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import arrow from '../../assets/img/chat_img/submit_arrow.png';
 import back from '../../assets/img/chat_img/back_arrow.png';
 import info from '../../assets/img/chat_img/info.png';
 
+const API_BASE = process.env.REACT_APP_CHAT_API;
 const API_BASE = process.env.REACT_APP_CHAT_API;
 
 export default function LiveChat({ roomId, userId }) {
@@ -26,7 +29,21 @@ export default function LiveChat({ roomId, userId }) {
   }
 
   // 1) 최초 히스토리 로드 (REST)
+  // 1) 최초 히스토리 로드 (REST)
   useEffect(() => {
+    if (!roomId) return;
+    let alive = true;
+    (async () => {
+      try {
+        const { data } = await axios.get(`${API_BASE}/rooms/${roomId}/messages`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
+        });
+        if (!alive) return;
+        setMessages(Array.isArray(data) ? data : []);
+      } catch (e) {
+        console.error('[history GET fail]', e);
     if (!roomId) return;
     let alive = true;
     (async () => {
@@ -50,7 +67,19 @@ export default function LiveChat({ roomId, userId }) {
     if (!socket?.connected || !roomId) return;
     const unsub = socket.subscribeRoom(roomId, (msg) => {
       // msg: { id, roomId, senderId, senderNickname, text, sentAt }
+    })();
+    return () => { alive = false; };
+  }, [roomId]);
+
+  //방 입장(STOMP 구독)
+  useEffect(() => {
+    if (!socket?.connected || !roomId) return;
+    const unsub = socket.subscribeRoom(roomId, (msg) => {
+      // msg: { id, roomId, senderId, senderNickname, text, sentAt }
       setMessages((prev) => [...prev, msg]);
+    });
+    return () => unsub?.();
+  }, [socket, socket?.connected, roomId]);
     });
     return () => unsub?.();
   }, [socket, socket?.connected, roomId]);
@@ -66,7 +95,32 @@ export default function LiveChat({ roomId, userId }) {
     const text = message.trim();
     if (!text || !socket?.connected) return;
     socket.sendMessage(roomId, { text });
+    if (!text || !socket?.connected) return;
+    socket.sendMessage(roomId, { text });
     setMessage('');
+    textRef.current && (textRef.current.style.height = '');
+  };
+
+  // 5) 번역 (REST)
+  const translateOne = (messageId) => {
+    axios.get(`${API_BASE}/messages/${messageId}/translate`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+      }
+    })
+      .then((response) => {
+        const data = response.data;
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === messageId ? { ...m, translatedText: data.translatedText } : m
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("번역 axios 오류", error);
+      });
+  };
+
     textRef.current && (textRef.current.style.height = '');
   };
 
@@ -114,9 +168,15 @@ export default function LiveChat({ roomId, userId }) {
               <div className={`msg ${isMine ? 'mine' : 'theirs'}`} key={m.id ?? `${m.ts}-${m.message}`}>
                 {!isMine && <div className="writer" title={m.senderNickname}>
                   {m.senderNickname}
+                {!isMine && <div className="writer" title={m.senderNickname}>
+                  {m.senderNickname}
                 </div>}
                 <div className="bubble">
                   <span>{m.text}</span>
+                  <button type="button" onClick={() => translateOne(m.id)} style={{ marginLeft: 8 }}>
+                    번역 보기
+                  </button>
+                  {m.translatedText && <div className="translated">{m.translatedText}</div>}
                   <button type="button" onClick={() => translateOne(m.id)} style={{ marginLeft: 8 }}>
                     번역 보기
                   </button>
@@ -139,6 +199,7 @@ export default function LiveChat({ roomId, userId }) {
         />
         <button type='submit'><img src={arrow} alt="" /></button>
       </form>
+    </div >
     </div >
   );
 }

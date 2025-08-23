@@ -2,11 +2,18 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-    flex: 1 1 auto;               /* 남은 공간 차지 */
-    overflow-y: scroll;    /* 내용이 많으면 세로 스크롤 */
+    flex: 1;               /* 남은 공간 차지 */
+    overflow-y: auto;    /* 내용이 많으면 세로 스크롤 */
     padding: 16px; 
     margin-left: 19px;
     min-height: 0;
+    margin-bottom: 100px;
+}
+.matched-wrap2{
+position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 .matiching-nav {
     display: flex;
@@ -205,11 +212,14 @@ font-weight: 400;
 font-size: 10px;
 color: #888888;
 }
-.footer{
+.matched2-footer{
     width: 390px;
     flex-shrink: 0; 
     border-top: solid 1px #888888;
-    padding: 18px 44px ;
+    padding:0 44px ;
+    position: absolute;
+    bottom: 5px;
+    background-color: #fff;
 }
 .matched-footer{
 width: 302px;
@@ -221,7 +231,10 @@ justify-content: space-between;
 gap: 10px;
 }
 .menu-home{
-
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;
 }
 .menu-home > p{
 font-weight: 400;
@@ -230,9 +243,13 @@ display: flex;
 align-items: center;
 justify-content: space-between;
 flex-direction: column;
+color: #6177F0;
 }
 .menu-chat{
-
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;
 }
 .menu-chat > p{
 font-weight: 400;

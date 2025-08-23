@@ -1,6 +1,7 @@
 import React from 'react'
 import Delete from '../../assets/img/chat_img/delete.png'
 import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function ReportModal({ openModal, closeModal,payload }) {
     const navigate = useNavigate();

@@ -1,38 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n'; 
 
 const Modify_Language = () => {
-
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [showLanguages, setShowLanguages] = useState(false);
   const [selectedLang, setSelectedLang] = useState("");
 
-  const languages = ["한국어", "English"];
+  const languages = [
+    { label: "한국어", value: "ko" },
+    { label: "English", value: "en" }
+  ];
+
+  // 앱 시작 시 저장된 언어 불러오기
+  useEffect(() => {
+    const savedLang = localStorage.getItem("appLanguage");
+    if (savedLang) {
+      setSelectedLang(savedLang);
+      const langLabel = languages.find(l => l.value === savedLang)?.label;
+      setQuery(langLabel || "");
+      i18n.changeLanguage(savedLang);
+    }
+  }, []);
 
   const handleShowLanguages = () => {
     setShowLanguages(!showLanguages);
   };
 
   const handleSelectLanguage = (lang) => {
-    setSelectedLang(lang);
-    setQuery(lang);
+  setSelectedLang(lang.value); // "ko" 또는 "en"
+  setQuery(lang.label);
     setShowLanguages(false);
   };
 
   const handleConfirm = () => {
     if (!selectedLang) {
-      alert("언어를 선택해주세요.");
+      alert(t('modifyLanguage.alertSelect'));
       return;
     }
-    // 언어 선택 값 저장
+    // 언어 즉시 변경
+    i18n.changeLanguage(selectedLang);
+    // 로컬스토리지에 저장
     localStorage.setItem("appLanguage", selectedLang);
-    // 페이지 새로고침 (언어 반영)
-    window.location.reload();
+    // 선택 후 페이지 이동
+    navigate('/mypage');
   };
 
   return (
     <div className='wrap'>
+      <div className="language-wrap">
       <div className='language-box1'>
         <a href="mypage">
     <svg className='back' width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -40,7 +59,7 @@ const Modify_Language = () => {
 </svg>
         </a>
         <div>
-          <p>사용 언어를 선택해주세요</p>
+          <p>{t('modifyLanguage.selectPrompt')}</p>
         </div>
       </div>
 
@@ -74,10 +93,10 @@ const Modify_Language = () => {
             <ul className="language-list">
               {languages.map((lang) => (
                 <li
-                  key={lang}
+                  key={lang.value}
                   onClick={() => handleSelectLanguage(lang)}
                 >
-                  {lang}
+                  {lang.label}
                 </li>
               ))}
             </ul>
@@ -85,9 +104,10 @@ const Modify_Language = () => {
         </div>
 
         <button className='language-okbtn' onClick={handleConfirm}>
-          확인
+          {t('modifyLanguage.confirm')}
         </button>
       </div>
+    </div>
     </div>
   );
 };

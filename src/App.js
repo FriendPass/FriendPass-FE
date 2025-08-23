@@ -47,6 +47,7 @@ function LiveChatPage({ userId }) {
 export default function App() {
   const userId = useUserId();
 
+
   return (
     <BrowserRouter>
       <SocketProvider userId={userId}>
@@ -86,5 +87,7 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
+
 
 
