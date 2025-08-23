@@ -13,7 +13,7 @@ export default function Ranking() {
 
     //테스트용
     const mock = new AxiosMockAdapter(axios, { delayResponse: 400 });
-    mock.onGet(API_URL).reply(200, [
+    mock.onGet(API_BASE).reply(200, [
         { id: 'u101', rank: 1, name: '김아라', stamp: 28, isMe: false },
         { id: 'u102', rank: 2, name: 'Lee John', stamp: 26, isMe: false },
         { id: 'u103', rank: 3, name: 'Zhang Li', stamp: 24, isMe: false },
@@ -25,7 +25,7 @@ export default function Ranking() {
     ]);
     
     useEffect(() => {
-        axios.get(API_URL)
+        axios.get(API_BASE)
             .then(response => {
                 const data = response.data;
                 const me = data.find(r => r.isMe);
