@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import ReportModal from './ReportModal';
 import axios from 'axios';
 
-export default function ReportProfile() {
+export default function Profile() {
     const navigate = useNavigate();
 
     const goBack = () => {
@@ -25,14 +25,14 @@ export default function ReportProfile() {
                 <img onClick={goBack} src={Delete} alt="" />
             </div>
             <div className="main">
-                <img src={Delete} alt="" />
+                <div className='profile_img'/>
                 <span>Sarah</span>
             </div>
             <button id="profile_btn" onClick={openModal}>
                 <img src={report} alt="" />
                 <p>사용자 신고하기</p>
             </button>
-            <ReportModal openModal={open} closeModal={closeModal}  />
+            <ReportModal openModal={open} closeModal={closeModal} />
         </div>
     )
 }
