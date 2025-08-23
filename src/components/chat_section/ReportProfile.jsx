@@ -1,23 +1,52 @@
 import React, { useState, useEffect } from 'react'
 import report from '../../assets/img/chat_img/report.png'
 import Delete from '../../assets/img/chat_img/delete.png'
-import { useNavigate } from 'react-router-dom';
+import defaultProfile from '../../assets/img/chat_img/default_profile.png'
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import ReportModal from './ReportModal';
 import axios from 'axios';
 
+const API_BASE = process.env.REACT_APP_CHAT_API;
+
 export default function Profile() {
     const navigate = useNavigate();
+    const { roomId, userId } = useParams();
+    const { state } = useLocation();
+
+    const payload = {
+        reportedUserID: Number(userId),            // 프로필 대상 유저 ID
+        chatId: Number(roomId),                    // 현재 채팅방 ID
+    };
 
     const goBack = () => {
         navigate(-1);
     }
     const [open, setOpen] = useState(false);
-    const openModal = () => {
-        setOpen(true);
-    };
-    const closeModal = () => {
-        setOpen(false);
-    };
+    const [profile, setProfile] = useState({
+        nickname: state?.nickname ?? '',
+        profileImage: state?.profileImage ?? '',
+    });
+
+    // state 없이 직접 진입한 경우(새로고침/딥링크)에도 안전하게 보완 조회
+    useEffect(() => {
+        if (profile.nickname && profile.profileImage) return;
+
+        const INFO_URL = `${API_BASE}/rooms/${roomId}`;
+        axios
+            .get(INFO_URL)
+            .then(({ data }) => {
+                const list = Array.isArray(data?.teammates) ? data.teammates : [];
+                const found =
+                    list.find((t) => String(t.userId) === String(userId)) ?? null;
+                if (found) {
+                    setProfile({
+                        nickname: found.nickname ?? '',
+                        profileImage: found.profileImage ?? '',
+                    });
+                }
+            })
+            .catch((e) => console.error('프로필 보완 조회 실패', e));
+    }, [API_BASE, roomId, userId, profile.nickname, profile.profileImage]);
 
     return (
         <div className="Profile wrap">
@@ -25,14 +54,14 @@ export default function Profile() {
                 <img onClick={goBack} src={Delete} alt="" />
             </div>
             <div className="main">
-                <div className='profile_img'/>
-                <span>Sarah</span>
+                <img className='profile_img' src={profile.profileImage || defaultProfile} alt='' />
+                <span>{profile.nickname || '사용자'}</span>
             </div>
-            <button id="profile_btn" onClick={openModal}>
+            <button id="profile_btn" onClick={() => setOpen(true)}>
                 <img src={report} alt="" />
                 <p>사용자 신고하기</p>
             </button>
-            <ReportModal openModal={open} closeModal={closeModal} />
+            <ReportModal openModal={open} closeModal={() => setOpen(false)} payload={payload} />
         </div>
     )
 }

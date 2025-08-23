@@ -11,7 +11,7 @@ import Ranking from './components/ranking_section/Ranking';
 import ReportProfile from './components/chat_section/ReportProfile';
 import LayoutNoNav from './components/nav_section/LayoutNoNav'
 import LayoutwithNav from './components/nav_section/LayoutwithNav'
-
+import ReportChoice from './components/chat_section/ReportChoice';
 
 import Home from './components/Home';
 import Login from './components/Login_section/Login';
@@ -57,11 +57,13 @@ export default function App() {
           </Route>
 
           <Route element={<LayoutNoNav />}>
+            <Route path="/chat/:roomId" element={<LiveChatPage />} />
+            <Route path="/chatInfo" element={<ChatInfo />} />
+            <Route path="/member/:userId" element={<ReportProfile />} />
+            <Route path='/reportchoices' element={<ReportChoice />} />
+
             <Route path="/home" element={<Home />} />
             <Route path="/" element={<Home />} />
-            <Route path="/chat/:roomId" element={<LiveChat userId={userId} />} />
-            <Route path="/reportprofile" element={<ReportProfile />} />
-            <Route path="/chatInfo" element={<ChatInfo />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/language" element={<Language />} />
             <Route path="/agree" element={<Agree />} />

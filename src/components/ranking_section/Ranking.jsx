@@ -2,10 +2,14 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import AxiosMockAdapter from 'axios-mock-adapter'; //테스트용
 
+const API_BASE = process.env.REACT_APP_RANK_API
+const MyRank_URL=  `${API_BASE}/me`;
+const OthersRank_URL=`${API_BASE}/leaderboard?page=0&size=10`;
+
 export default function Ranking() {
-    const API_URL = "백엔드 API 주소"
     const [myRank, setMyRank] = useState(null);
     const [rankList, setRankList] = useState([]);
+    
 
     //테스트용
     const mock = new AxiosMockAdapter(axios, { delayResponse: 400 });

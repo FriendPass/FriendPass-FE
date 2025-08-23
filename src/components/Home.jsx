@@ -66,7 +66,7 @@ const Home = () => {
     <a href="/chatList">
       <p>채팅 목록</p>
     </a>
-    <a href="/reportprofile">
+    <a href="/member/:userId">
       <p>사용자 신고</p>
     </a>
     <a href="/chatInfo">
