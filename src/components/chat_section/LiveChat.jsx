@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../../socket/SocketProvider';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import arrow from '../../assets/img/chat_img/submit_arrow.png';
 import back from '../../assets/img/chat_img/back_arrow.png';
 import info from '../../assets/img/chat_img/info.png';
 
+const API_BASE = process.env.REACT_APP_CHAT_API;
 
 export default function LiveChat({ roomId, userId }) {
   const navigate = useNavigate();
@@ -12,10 +14,8 @@ export default function LiveChat({ roomId, userId }) {
 
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
-  const [myId, setMyId] = useState(null);
   const listRef = useRef(null);
   const textRef = useRef(null);
-  const lastTsRef = useRef(0);
 
   const goBack = () => {
     navigate('/');
@@ -25,38 +25,35 @@ export default function LiveChat({ roomId, userId }) {
     navigate('/chatInfo')
   }
 
-  // 방 입장 + 히스토리/실시간 리스너
+  // 1) 최초 히스토리 로드 (REST)
   useEffect(() => {
-    if (!socket || !roomId) return;
-
-    const handleHistory = (list) => {
-      if (list?.length) {
-        lastTsRef.current = list[list.length - 1].ts;
-        setMessages((prev) => [...prev, ...list]);
+    if (!roomId) return;
+    let alive = true;
+    (async () => {
+      try {
+        const { data } = await axios.get(`${API_BASE}/rooms/${roomId}/messages`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
+        });
+        if (!alive) return;
+        setMessages(Array.isArray(data) ? data : []);
+      } catch (e) {
+        console.error('[history GET fail]', e);
       }
-    };
+    })();
+    return () => { alive = false; };
+  }, [roomId]);
 
-    const handleChat = (msg) => {
-      lastTsRef.current = msg.ts;
+  //방 입장(STOMP 구독)
+  useEffect(() => {
+    if (!socket?.connected || !roomId) return;
+    const unsub = socket.subscribeRoom(roomId, (msg) => {
+      // msg: { id, roomId, senderId, senderNickname, text, sentAt }
       setMessages((prev) => [...prev, msg]);
-    };
-
-    const joinRoom = () => {
-      socket.emit('join', { roomId, since: lastTsRef.current || 0 }); //서버에 방 입장+히스토리 요청
-    };
-
-    // 연결되어 있으면 즉시 join, 아니면 연결되자마자 join
-    if (socket.connected) joinRoom();
-    socket.on('connect', joinRoom);
-    socket.on('history', handleHistory);
-    socket.on('chat_msg', handleChat);
-
-    return () => {
-      socket.off('connect', joinRoom);
-      socket.off('history', handleHistory);
-      socket.off('chat_msg', handleChat);
-    };
-  }, [socket, roomId]);
+    });
+    return () => unsub?.();
+  }, [socket, socket?.connected, roomId]);
 
   //자동 스크롤
   useEffect(() => {
@@ -67,19 +64,32 @@ export default function LiveChat({ roomId, userId }) {
   const sendMessage = (e) => {
     e.preventDefault();
     const text = message.trim();
-    if (!text || !socket) return;
-    if (!socket.connected) {
-      console.warn('[send blocked] socket not connected');
-      return;
-    }
-    console.log('[send]', { roomId, text });
-    socket.emit('chat_msg', { roomId, text });
+    if (!text || !socket?.connected) return;
+    socket.sendMessage(roomId, { text });
     setMessage('');
-
-    if (textRef.current) {
-      textRef.current.style.height = '';
-    }
+    textRef.current && (textRef.current.style.height = '');
   };
+
+  // 5) 번역 (REST)
+  const translateOne = (messageId) => {
+    axios.get(`${API_BASE}/messages/${messageId}/translate`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+      }
+    })
+      .then((response) => {
+        const data = response.data;
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === messageId ? { ...m, translatedText: data.translatedText } : m
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("번역 axios 오류", error);
+      });
+  };
+
 
   //textarea
   const autoGrow = (e) => {
@@ -102,12 +112,15 @@ export default function LiveChat({ roomId, userId }) {
             const isMine = m.senderId === userId;
             return (
               <div className={`msg ${isMine ? 'mine' : 'theirs'}`} key={m.id ?? `${m.ts}-${m.message}`}>
-                {!isMine && <div className="writer" title={m.senderId}>
-                  {m.senderId}
+                {!isMine && <div className="writer" title={m.senderNickname}>
+                  {m.senderNickname}
                 </div>}
                 <div className="bubble">
                   <span>{m.text}</span>
-                  <p>번역 보기</p>
+                  <button type="button" onClick={() => translateOne(m.id)} style={{ marginLeft: 8 }}>
+                    번역 보기
+                  </button>
+                  {m.translatedText && <div className="translated">{m.translatedText}</div>}
                 </div>
               </div>
             );
@@ -126,7 +139,8 @@ export default function LiveChat({ roomId, userId }) {
         />
         <button type='submit'><img src={arrow} alt="" /></button>
       </form>
-    </div>
+    </div >
   );
 }
+
 

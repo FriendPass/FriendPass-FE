@@ -1,8 +1,10 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
 import { updateUserInterests } from '../../api/users';
+import { useTranslation } from 'react-i18next';
 
 function Modify_Interest() {
+const { t } = useTranslation();
 const [activeIndexes, setActiveIndexes] = React.useState([]); // 배열로 상태 관리
 const navigate = useNavigate();
 
@@ -18,7 +20,7 @@ const toggleActive = (idx) => {
     if (activeIndexes.length < 3) {
       setActiveIndexes([...activeIndexes, idx]);
     } else {
-      alert('최대 3개까지 선택할 수 있습니다.');
+      alert(t('modifyInterest.alertMax3'));
     }
   }
 };
@@ -31,12 +33,13 @@ const toggleActive = (idx) => {
       navigate('/matching');
     } catch (err) {
       console.error(err.response?.data || err.message);
-      alert('관심사 저장 실패');
+      alert(t('modifyInterest.alertSaveFail'));
     }
   };
 
   return (
     <div className='wrap'>
+      <div className="interest-wrap">
     <div className='interest-choice-box1'>
     <a href="/mypage">
     <svg className='back' width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -45,10 +48,10 @@ const toggleActive = (idx) => {
 </a>
 </div>
 <div className="interest-choice-box2">
-    <p>무엇에 관심이 있으신가요?</p>
-    <h1>관심사를 기반으로 교환학생과 한국학생을</h1>
-    <h1>AI가 매칭해드려요.</h1>
-    <h1>최대 3개 선택할 수 있어요.</h1>
+          <p>{t('modifyInterest.prompt')}</p>
+          <h1>{t('modifyInterest.description1')}</h1>
+          <h1>{t('modifyInterest.description2')}</h1>
+          <h1>{t('modifyInterest.description3')}</h1>
 </div>
 <div className="interest-choice-box3">
       {buttons.map((btn, idx) => (
@@ -57,11 +60,12 @@ const toggleActive = (idx) => {
         className={`interest-button ${activeIndexes.includes(idx) ? "active" : ""}`}
         onClick={() => toggleActive(idx)}
       >
-        {btn}
+        {t(`modifyInterest.options.${btn}`)}
       </button>
       ))}
 </div>
-<button className='interest-start' onClick={handleStart}>FriendPass 시작하기</button>
+<button className='interest-start' onClick={handleStart}>{t('modifyInterest.startButton')}</button>
+    </div>
     </div>
   )
 }

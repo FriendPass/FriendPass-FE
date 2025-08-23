@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Agree from '../modal/Agree';
 import { requestMatching, getMyMatching} from "../../api/matching";
 import { useNavigate } from "react-router-dom"; 
+import { useTranslation } from 'react-i18next';
 
 function Matching() {
   const [status, setStatus] = useState("none"); // none, progress, failed
@@ -13,12 +14,13 @@ function Matching() {
   );
   const [isDisabled, setIsDisabled] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const displayRegions = ["국민", "성신", "동덕"].map(r => t(`region.${r}`)); 
+  const displayInterests = interests.map(i => t(`matching.interests.${i}`)); 
 
   // 더미 데이터
 useEffect(() => {
   const dummyInterests = ["맛집", "전통문화", "산책"];
-  
-  // 상태 세팅
   setInterests(dummyInterests);
 }, []);
 
@@ -47,9 +49,9 @@ useEffect(() => {
     const days = Math.floor(totalMin / (24 * 60));
     const hours = Math.floor((totalMin % (24 * 60)) / 60);
     const mins = totalMin % 60;
-    if (days > 0) return `${days}일 ${hours}시간 ${mins}분`;
-    if (hours > 0) return `${hours}시간 ${mins}분`;
-    return `${mins}분`;
+    if (days > 0) return `${days}d ${hours}h ${mins}m`;
+    if (hours > 0) return `${hours}h ${mins}m`;
+    return `${mins}m`;
   };
 
   // 페이지 로드 시 위치 정보 동의 여부 확인
@@ -120,12 +122,12 @@ useEffect(() => {
     updateDisabledFromStorage();
     if (isDisabled) {
       const remain = getRemainingText();
-      alert(`현재 매칭은 제한되어 있습니다.\n남은 시간: ${remain || "잠시 후 다시 시도해주세요."}`);
+       alert(`${t('matching.restricted')}\n${getRemainingText() || t('matching.tryLater')}`);
       return;
     }
 
     if (!selectedRegion) {
-      alert("먼저 지역을 선택해주세요.");
+      alert(t('matching.selectRegion'));
       return;
     }
 
@@ -139,44 +141,15 @@ useEffect(() => {
       }
     } catch (err) {
       console.error("매칭 실패:", err);
-      alert("매칭 요청에 실패했습니다.");
+      alert(t('matching.fail'));
     }
   };
 
   const renderMessage = () => {
-      if (isDisabled) {
-      return (
-        <p className="matching-p3" style={{ marginTop: 8 }}>
-          매칭 종료로 인해 일시적으로 제한되었습니다.<br /> 남은 시간: {getRemainingText()}
-        </p>
-      );
-    }
-
-    if (status === "none") {
-      return (
-        <p className="matching-p3">
-          현재 매칭 정보가 없어요.<br />
-          AI 관심사 기반 맞춤 매칭을 시작해보세요!
-        </p>
-      );
-    }
-    if (status === "대기중") {
-      return (
-        <p className="matching-p3">
-          현재 매칭 진행중이에요.<br />
-          {matchDate}에 매칭 결과가 나와요!
-        </p>
-      );
-    }
-    if (status === "failed") {
-      return (
-        <p className="matching-p3">
-          이번에는 매칭에 실패했어요.<br />
-          다시 매칭하고 싶다면 아래에서 재매칭을<br />
-          시작해주세요!
-        </p>
-      );
-    }
+    if (isDisabled) return <p className="matching-p3">{t('matching.restricted')}<br />{getRemainingText()}</p>;
+    if (status === "none") return <p className="matching-p3">{t('matching.noInfo')}</p>;
+    if (status === "대기중") return <p className="matching-p3">{t('matching.waiting', { date: matchDate })}</p>;
+    if (status === "failed") return <p className="matching-p3">{t('matching.failed')}</p>;
   };
 
   return (
@@ -188,18 +161,18 @@ useEffect(() => {
 </svg>
       </div>
       <div className="matching-box1">
-        <p className='matching-p1'>매칭</p>
+        <p className='matching-p1'>{t('matching.title')}</p>
       </div>
       <div className="matching-box2">
-        <p className='matching-p2'>현재 매칭</p>
+        <p className='matching-p2'>{t('matching.current')}</p>
         <div className='matching-message'>
             {renderMessage()}
         </div>
       </div>
       <div className="matching-box3">
-        <p className='matching-p2'>매칭 설정</p>
+        <p className='matching-p2'>{t('matching.settings')}</p>
         <div className="matching-box4">
-          <p className='matching-p4'>장소</p>
+          <p className='matching-p4'>{t('matching.unvregion')}</p>
           <div className='matching-region-btn'>
               {["국민", "성신", "동덕"].map(region => (
                 <button
@@ -207,17 +180,17 @@ useEffect(() => {
                   onClick={() => handleRegionClick(region)}
                   className={selectedRegion === region ? "selected" : ""}
                 >
-                  {region}
+                  {t(`matching.region.${region}`)}
                 </button>
               ))}
           </div>
-          <p className='matching-p4'>설정된 관심사</p>
+          <p className='matching-p4'>{t('matching.interests')}</p>
           <div>
         {interests.map((interest, idx) => (
-          <button key={idx}>{interest}</button>
+          <button key={idx}>{t(`matching.selectInterests.${interest}`)}</button>
         ))}
           </div>
-          <p className='matching-p5'>관심사는 설정에서 최대 3개 변경 및 설정할 수 있어요!</p>
+          <p className='matching-p5'>{t('matching.interestsNote')}</p>
         </div>
       </div>
       <button
@@ -225,7 +198,7 @@ useEffect(() => {
         onClick={handleMatchingClick}
         disabled={status === "대기중" || isDisabled} // 진행중이면 회색, 클릭 불가
       >
-         {status === "failed" ? "재매칭" : "매칭하기"}
+         {status === "failed" ? t('matching.retry') : t('matching.match')}
       </button>
       <div className="footer">
         <div className='matching-footer'>
@@ -233,14 +206,14 @@ useEffect(() => {
           <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M15 2.5L18.8625 10.325L27.5 11.5875L21.25 17.675L22.725 26.275L15 22.2125L7.275 26.275L8.75 17.675L2.5 11.5875L11.1375 10.325L15 2.5Z" fill="#6177F0" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
-<p>매칭</p>
+<p>{t("menu.matching")}</p>
         </div>
         <a href="/chatList">
         <div className="menu-chat">
           <svg width="34" height="29" viewBox="0 0 34 29" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M29.75 13.8958C29.7549 15.4906 29.318 17.0639 28.475 18.4875C27.4754 20.1933 25.9388 21.6281 24.0372 22.6312C22.1356 23.6342 19.9442 24.1659 17.7083 24.1666C15.8385 24.1708 13.994 23.7982 12.325 23.0791L4.25 25.375L6.94167 18.4875C6.09865 17.0639 5.66179 15.4906 5.66667 13.8958C5.66753 11.9888 6.29087 10.1196 7.46685 8.49764C8.64284 6.87569 10.325 5.56503 12.325 4.71247C13.994 3.99343 15.8385 3.62082 17.7083 3.62497H18.4167C21.3695 3.76392 24.1585 4.82698 26.2496 6.61059C28.3408 8.39421 29.5871 10.7731 29.75 13.2916V13.8958Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
-<p>채팅</p> 
+<p>{t("menu.chat")}</p> 
         </div>
         </a>
         <a href="/ranking">
@@ -248,7 +221,7 @@ useEffect(() => {
           <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M10.6045 17.9413L9.04159 29.7084L15.4999 25.8334L21.9583 29.7084L20.3953 17.9284M24.5416 10.3334C24.5416 15.3269 20.4935 19.375 15.4999 19.375C10.5063 19.375 6.45825 15.3269 6.45825 10.3334C6.45825 5.33978 10.5063 1.29169 15.4999 1.29169C20.4935 1.29169 24.5416 5.33978 24.5416 10.3334Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
-<p>랭킹</p>
+<p>{t("menu.ranking")}</p>
         </div>
         </a>
         <a href="/mypage">
@@ -256,7 +229,7 @@ useEffect(() => {
           <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M25.8333 27.125V24.5417C25.8333 23.1714 25.2889 21.8572 24.32 20.8883C23.3511 19.9193 22.0369 19.375 20.6666 19.375H10.3333C8.96301 19.375 7.64885 19.9193 6.67991 20.8883C5.71097 21.8572 5.16663 23.1714 5.16663 24.5417V27.125M20.6666 9.04167C20.6666 11.8951 18.3534 14.2083 15.5 14.2083C12.6465 14.2083 10.3333 11.8951 10.3333 9.04167C10.3333 6.1882 12.6465 3.875 15.5 3.875C18.3534 3.875 20.6666 6.1882 20.6666 9.04167Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
-<p>마이페이지</p>
+<p>{t("menu.mypage")}</p>
         </div>
         </a>
         </div>

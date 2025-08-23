@@ -2,19 +2,58 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 
+const API_BASE = process.env.REACT_APP_CHAT_API;
+
+const LIST_URL = `${API_BASE}/rooms`;
+
+
+// 날짜 포맷터 (ISO 혹은 LocalDateTime 문자열 가정)
+const fmtTime = (val) => {
+    if (!val) return "";
+    try {
+        const d = new Date(val);
+        if (!isNaN(d.getTime())) {
+            const yyyy = d.getFullYear();
+            const MM = String(d.getMonth() + 1).padStart(2, "0");
+            const dd = String(d.getDate()).padStart(2, "0");
+            const hh = String(d.getHours()).padStart(2, "0");
+            const mm = String(d.getMinutes()).padStart(2, "0");
+            return `${yyyy}-${MM}-${dd} ${hh}:${mm}`;
+        }
+    }
+    catch (_) { }
+    return String(val);
+};
+
 export default function List() {
     const navigate = useNavigate();
-    const API_URL = "백엔드 API 주소"
-
     const [current, setCurrent] = useState(null);
     const [previous, setPrevious] = useState([]);
 
     useEffect(() => {
-        axios.get(API_URL)
+        axios.get(LIST_URL, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            }
+        })
             .then(({ data }) => {
-                const list = Array.isArray(data) ? data : [];
-                const cur = list.find(r => r?.status !== 'archived') ?? list[0] ?? null;
-                const prev = cur ? list.filter(r => r?.roomId !== cur.roomId) : [];
+                const toItem = (r) => ({
+                    roomId: r.roomId,
+                    title: r.roomName,
+                    lastText: r.lastMessage ?? '',
+                    lastTs: r.lastMessageAt ?? null,
+                    isCurrent: !!r.current,
+                });
+
+                let cur = null;
+                let prev = [];
+
+                if (data && (data.current || data.previous)) {
+                    const currentArr = Array.isArray(data.current) ? data.current.map(toItem) : [];
+                    const previousArr = Array.isArray(data.previous) ? data.previous.map(toItem) : [];
+                    cur = currentArr[0] ?? null;
+                    prev = previousArr;
+                }
 
                 setCurrent(cur);
                 setPrevious(prev);
@@ -26,6 +65,7 @@ export default function List() {
     }, []);
 
     const moveCurrent = () => {
+        if (!current) return;
         navigate(`/chat/${current.roomId}`);
     }
     const movePrevious = (roomId) => {
@@ -44,7 +84,7 @@ export default function List() {
                         <div onClick={moveCurrent} className="room_box">
                             <div className="top">
                                 <h1>{current.title}</h1>
-                                <p>{current.lastTs}</p>
+                                <p>{fmtTime(current.lastTs)}</p>
                             </div>
                             <p id="LastText">{current.lastText}</p>
                         </div>
@@ -58,7 +98,7 @@ export default function List() {
                             <div key={r.roomId} className="room_box" onClick={() => movePrevious(r.roomId)}>
                                 <div className="top">
                                     <h1>{r.title}</h1>
-                                    <p>{r.lastTs}</p>
+                                    <p>{fmtTime(r.lastTs)}</p>
                                 </div>
                                 <p id="LastText">{r.lastText}</p>
                             </div>

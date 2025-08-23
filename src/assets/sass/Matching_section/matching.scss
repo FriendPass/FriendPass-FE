@@ -130,7 +130,10 @@ justify-content: space-between;
 gap: 10px;
 }
 .matching-menu-home{
-
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;
 }
 .matching-menu-home > p, .menu-chat > p,
  .menu-lank > p, .menu-mypage > p{
@@ -146,7 +149,10 @@ color: black;
     color: #6177F0;
 }
 .menu-chat{
-
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;
 }
 .menu-lank{
 
@@ -156,7 +162,7 @@ display: flex;
 align-items: center;
 justify-content: center;
 flex-direction: column;
-gap: 5px;
+gap: 3px;
 }
 .matching-region-btn > button:hover{
   background: #6177F0;

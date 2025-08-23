@@ -1,29 +1,28 @@
 import React from 'react'
 import Delete from '../../assets/img/chat_img/delete.png'
-import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 
 export default function ReportModal({ openModal, closeModal }) {
+    const navigate = useNavigate();
     if (!openModal) return null;
-    const API_URL = "백엔드 API 주소"
-    
-    const handleReport = (userId) => {
-        axios.post(API_URL, { targetUserId: userId })
-            .then(() => {
-                closeModal();
-            })
-            .catch(
-                error => {
-                    console.error("신고 axios 오류", error);
-                });
+
+    const SelectChoice = () => {
+        navigate('/reportchoices')
     }
 
     return (
         <div className='report_modal'>
             <img onClick={closeModal} src={Delete} alt="" />
             <p>사용자를 신고하시겠습니까?</p>
-            <button onClick={handleReport}>확인</button>
+            <button onClick={SelectChoice}>확인</button>
         </div>
     )
 }
+
+
+
+
+
+
 
 

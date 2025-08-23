@@ -1,6 +1,8 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Certify = ({ onClose, onConfirm }) => {
+  const { t } = useTranslation();
   const handleConfirm = () => {
     // 종료 후 제한 상태 기록 (localStorage 사용)
     localStorage.setItem("matchingDisabledUntil", Date.now() + 2 * 24 * 60 * 60 * 1000); // 2일 후
@@ -14,12 +16,12 @@ const Certify = ({ onClose, onConfirm }) => {
         <line x1="0.5" y1="-0.5" x2="16.4706" y2="-0.5" transform="matrix(-0.707107 0.707107 0.707107 0.707107 13 1)" stroke="black" strokeLinecap="round"/>
       </svg>
       <div className="certify-box1">
-        <p className='certify-p1'>주의하세요!</p>
-        <p className='certify-p2'>지금 매칭을 종료하면 악용 방지를 위해<br />2일동안 매칭이 제한됩니다. <br />그래도 진행하시겠습니까?</p>
+        <p className='certify-p1'>{t('certify.title')}</p>
+        <p className='certify-p2'>{t('certify.line1')}<br />{t('certify.line2')}<br />{t('certify.line3')}</p>
       </div>
       <a href="/matching">
       <div className="certify-box2" onClick={handleConfirm}>
-        <p className='certify-p3'>확인 및 매칭 종료</p>
+        <p className='certify-p3'>{t('certify.confirmButton')}</p>
       </div>
       </a>
     </div>

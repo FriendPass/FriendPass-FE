@@ -353,9 +353,10 @@
         align-items: center;
         margin-top: 89px;
 
-        img {
+        .profile_img {
             width: 390px;
             height: 388px;
+            background-color:#EDEDED;
             object-fit: cover;
             z-index: 1;
         }

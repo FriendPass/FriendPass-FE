@@ -14,7 +14,7 @@ const Nav = () => {
 
   return (
     <div className='nav_wrap'>
-      <Link className="nav_icon" id='match' to='/' onClick={() => setActive('match1')}>
+      <Link className="nav_icon" id='match' to='/matching' onClick={() => setActive('match1')}>
         <img src={active === 'match1' ? match2 : match1} alt="" />
         <p style={{ color: active === 'match1' ? '#6177F0' : '#000000' }}>매칭</p>
       </Link>
@@ -26,7 +26,7 @@ const Nav = () => {
         <img src={active === 'rank1' ? rank2 : rank1} alt="" />
         <p style={{ color: active === 'rank1' ? '#6177F0' : '#000000' }}>랭킹</p>
       </Link>
-      <Link className="nav_icon" id='account' to='/profile' onClick={() => setActive('account1')}>
+      <Link className="nav_icon" id='account' to='/mypage' onClick={() => setActive('account1')}>
         <img src={active === 'account1' ? account2 : account1} alt="" />
         <p style={{ color: active === 'account1' ? '#6177F0' : '#000000' }}>마이페이지</p>
       </Link>

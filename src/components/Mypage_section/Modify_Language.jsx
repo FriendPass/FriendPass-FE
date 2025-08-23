@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 const Modify_Language = () => {
-
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [showLanguages, setShowLanguages] = useState(false);
@@ -22,7 +23,7 @@ const Modify_Language = () => {
 
   const handleConfirm = () => {
     if (!selectedLang) {
-      alert("언어를 선택해주세요.");
+      alert(t('modifyLanguage.alertSelect'));
       return;
     }
     // 언어 선택 값 저장
@@ -33,6 +34,7 @@ const Modify_Language = () => {
 
   return (
     <div className='wrap'>
+      <div className="language-wrap">
       <div className='language-box1'>
         <a href="mypage">
     <svg className='back' width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -40,7 +42,7 @@ const Modify_Language = () => {
 </svg>
         </a>
         <div>
-          <p>사용 언어를 선택해주세요</p>
+          <p>{t('modifyLanguage.selectPrompt')}</p>
         </div>
       </div>
 
@@ -85,9 +87,10 @@ const Modify_Language = () => {
         </div>
 
         <button className='language-okbtn' onClick={handleConfirm}>
-          확인
+          {t('modifyLanguage.confirm')}
         </button>
       </div>
+    </div>
     </div>
   );
 };

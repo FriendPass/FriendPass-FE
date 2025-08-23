@@ -3,8 +3,10 @@ import { getMyMatching } from "../../api/matching"; // /matching/status
 import Certify from '../modal/Certify'
 import { certifyLocation } from "../../api/matching";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 const Matched = () => {
+  const { t } = useTranslation();
   const [showCertify, setShowCertify] = useState(false);
   const [matchingStatus, setMatchingStatus] = useState(null);
   const [selectedInterests, setSelectedInterests] = useState([]);
@@ -20,12 +22,12 @@ const Matched = () => {
 
   const handleRewardClick = () => {
     if (!locationAgreed) {
-      alert("위치 정보 제공에 동의해야 인증이 가능합니다.");
+      alert(t('matched.locationAlert'));
       return;
     }
 
     if (!navigator.geolocation) {
-      alert("브라우저에서 위치 정보를 지원하지 않습니다.");
+      alert(t('matched.geolocationUnsupported'));
       return;
     }
 
@@ -41,10 +43,10 @@ const Matched = () => {
             alert(res.message);
           }
         } catch {
-          alert("서버 요청에 실패했습니다.");
+          alert(t('matched.serverFail'));
         }
       },
-      () => alert("위치 정보를 가져오지 못했습니다.")
+      () => alert(t('matched.locationFail'))
     );
   };
 
@@ -117,6 +119,7 @@ const Matched = () => {
 
   return (
     <div className='wrap'>
+      <div className="matched-wrap2">
       <div className="matched-wrap">
       <div className="matiching-nav">
         <svg className='matching-logo' width="121" height="18" viewBox="0 0 121 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -124,31 +127,31 @@ const Matched = () => {
 </svg>
       </div>
       <div className="matched-box1">
-        <p className='matching-p1'>매칭</p>
+        <p className='matching-p1'>{t('matched.title')}</p>
       </div>
       <div className="matched-box2">
         <div className="matched-now">
-          <p className='matching-p2'>현재 매칭</p>
+          <p className='matching-p2'>{t('matched.current')}</p>
         </div>
         <div className='matched-box4'>
           <div className='matched-done'>
-            <p className='matching-p3'>매칭이 완료되었어요! 채팅에서 대화해 보세요</p>
-            <button onClick={handleRewardClick}>인증 및 리워드 받기</button>
+            <p className='matching-p3'>{t('matched.completeMsg')}</p>
+            <button onClick={handleRewardClick}>{t('matched.rewardButton')}</button>
             </div>
           <div className='matched-box5'>
-            <p className='matching-p4'>공통 관심사</p>
+            <p className='matching-p4'>{t('matched.commonInterests')}</p>
               <div className='matched-interest-btn'>
                 {selectedInterests.map((interest, idx) => (
-                  <button key={idx}>{interest}</button>
+                  <button key={idx}>{t(`matched.selectInterests.${interest}`)}</button>
                 ))}
               </div>
           </div>
           <div className='matched-box6'>
-          <p className='matching-p4'>장소 추천 리스트</p>
+          <p className='matching-p4'>{t('matched.placeList')}</p>
       {representativePlaces.map((item, idx) => (
         <div key={idx} className="matched-box9">
           {/* 관심사 버튼 */}
-          <button>{item.interest}</button>
+          <button>{t(`matched.selectInterests.${item.interest}`)}</button>
 
           {/* 장소 리스트 */}
           <div className="matched-list-box">
@@ -171,10 +174,10 @@ const Matched = () => {
       ))}
           </div>
           <div className="matched-box3">
-            <p className='matching-p4'>매칭 멤버</p>
+            <p className='matching-p4'>{t('matched.members')}</p>
             <div className="matched-box7">
  {members.length === 0 ? (
-                  <p className='matching-p4'>멤버의 정보를 불러오는 중...</p>
+                  <p className='matching-p4'>{t('matched.loadingMembers')}</p>
                 ) : (
                   members.map((m) => (
                     <div key={m.userId} className="matched-box8">
@@ -189,7 +192,7 @@ const Matched = () => {
                 )}
           </div>
           <div className="matched-exit">
-          <button onClick={() => setShowCertify(true)}>매칭종료하기</button>
+          <button onClick={() => setShowCertify(true)}>{t('matched.endMatching')}</button>
           {showCertify && (
   <div className="modal-overlay">
     <div className="modal-content">
@@ -202,20 +205,20 @@ const Matched = () => {
         </div>
       </div>
     </div>
-            <div className="footer">
+            <div className="matched2-footer">
         <div className='matched-footer'>
         <div className="menu-home">
           <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M15 2.5L18.8625 10.325L27.5 11.5875L21.25 17.675L22.725 26.275L15 22.2125L7.275 26.275L8.75 17.675L2.5 11.5875L11.1375 10.325L15 2.5Z" fill="#6177F0" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
-<p>매칭</p>
+<p>{t("menu.matching")}</p> 
         </div>
         <a href="/chatList">
         <div className="menu-chat">
           <svg width="34" height="29" viewBox="0 0 34 29" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M29.75 13.8958C29.7549 15.4906 29.318 17.0639 28.475 18.4875C27.4754 20.1933 25.9388 21.6281 24.0372 22.6312C22.1356 23.6342 19.9442 24.1659 17.7083 24.1666C15.8385 24.1708 13.994 23.7982 12.325 23.0791L4.25 25.375L6.94167 18.4875C6.09865 17.0639 5.66179 15.4906 5.66667 13.8958C5.66753 11.9888 6.29087 10.1196 7.46685 8.49764C8.64284 6.87569 10.325 5.56503 12.325 4.71247C13.994 3.99343 15.8385 3.62082 17.7083 3.62497H18.4167C21.3695 3.76392 24.1585 4.82698 26.2496 6.61059C28.3408 8.39421 29.5871 10.7731 29.75 13.2916V13.8958Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
-<p>채팅</p> 
+<p>{t("menu.chat")}</p>
         </div>
         </a>
         <a href="/ranking">
@@ -223,7 +226,7 @@ const Matched = () => {
           <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M10.6045 17.9413L9.04159 29.7084L15.4999 25.8334L21.9583 29.7084L20.3953 17.9284M24.5416 10.3334C24.5416 15.3269 20.4935 19.375 15.4999 19.375C10.5063 19.375 6.45825 15.3269 6.45825 10.3334C6.45825 5.33978 10.5063 1.29169 15.4999 1.29169C20.4935 1.29169 24.5416 5.33978 24.5416 10.3334Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
-<p>랭킹</p>
+<p>{t("menu.ranking")}</p>
         </div>
         </a>
         <a href="/mypage">
@@ -231,10 +234,11 @@ const Matched = () => {
           <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M25.8333 27.125V24.5417C25.8333 23.1714 25.2889 21.8572 24.32 20.8883C23.3511 19.9193 22.0369 19.375 20.6666 19.375H10.3333C8.96301 19.375 7.64885 19.9193 6.67991 20.8883C5.71097 21.8572 5.16663 23.1714 5.16663 24.5417V27.125M20.6666 9.04167C20.6666 11.8951 18.3534 14.2083 15.5 14.2083C12.6465 14.2083 10.3333 11.8951 10.3333 9.04167C10.3333 6.1882 12.6465 3.875 15.5 3.875C18.3534 3.875 20.6666 6.1882 20.6666 9.04167Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
-<p>마이페이지</p>
+<p>{t("menu.mypage")}</p>
         </div>
         </a>
         </div>
+      </div>
       </div>
     </div>
   )

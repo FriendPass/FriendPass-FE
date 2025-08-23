@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://dd8f1124daf6.ngrok-free.app', // ngrok URL 예시
+  baseURL: process.env.REACT_APP_BASE, // ngrok URL 예시
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
