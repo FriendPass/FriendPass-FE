@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Delete from '../../assets/img/chat_img/delete.png'
 import axios from 'axios'
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
 
 const API_BASE = process.env.REACT_APP_BASE;
 const Report_URL = `${API_BASE}/reports`;
@@ -13,9 +14,16 @@ const CATEGORY_MAP = {
     '사기/금전 요구': 'FRAUD',
     '오프라인 위협/위험 행동': 'OFFLINE_THREAT',
     '기타(직접 작성)': 'OTHER',
+    'Abuse/Insult': 'ABUSE',
+    'Sexual Harassment/Inappropriate Behavior': 'SEXUAL_HARASSMENT',
+    'Spam/Ads': 'SPAM',
+    'Fraud/Money Request': 'FRAUD',
+    'Offline Threat/Risky Behavior': 'OFFLINE_THREAT',
+    'Other (write directly)': 'OTHER',
 };
 
 export default function ReportChoice() {
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const { state } = useLocation();
 
@@ -39,7 +47,7 @@ export default function ReportChoice() {
         if (!label) return;
 
         setCategory(label);
-        if (label !== '기타(직접 작성)') setReason('');
+        if (label !== t('report.categories.other')) setReason('');
     };
 
     const handleReport = () => {
@@ -47,11 +55,11 @@ export default function ReportChoice() {
         const reasonCategory = CATEGORY_MAP[category];
 
         if (!category) {
-            alert('신고 사유를 선택해주세요.');
+            alert(t('report.valid.selectCategory'));
             return;
         }
         if (reasonCategory === 'OTHER' && !reason.trim()) {
-            alert('기타 사유를 입력해주세요.');
+            alert(t('report.valid.enterOther'));
             return;
         }
 
@@ -80,29 +88,29 @@ export default function ReportChoice() {
                 <img onClick={goBack} src={Delete} alt="" />
             </div>
             <div className="main">
-                <h1>어떤 이유로 신고하시나요?</h1>
+                <h1>{t('report.title')}</h1>
                 <div className="choices" onClick={handleChoiceClick}>
                     <div className="block">
-                        <p>욕설/비하</p>
+                        <p>{t('report.categories.abuse')}</p>
                     </div>
                     <div className="block">
-                        <p>성희롱/부적절한 언행</p>
+                        <p>{t('report.categories.sexual')}</p>
                     </div>
                     <div className="block">
-                        <p>스팸/광고</p>
+                        <p>{t('report.categories.spam')}</p>
                     </div>
                     <div className="block">
-                        <p>사기/금전 요구</p>
+                        <p>{t('report.categories.fraud')}</p>
                     </div>
                     <div className="block">
-                        <p>오프라인 위협/위험 행동</p>
+                        <p>{t('report.categories.offline')}</p>
                     </div>
                     <div className="block2">
-                        <p>기타(직접 작성)</p>
-                        <input type="text" value={reason} onChange={(e) => { setReason(e.target.value) }} />
+                        <p>{t('report.categories.other')}</p>
+                        <input type="text" value={reason} onChange={(e) => { setReason(e.target.value) }} placeholder={t('report.otherPlaceholder')} />
                     </div>
                 </div>
-                <button onClick={handleReport} disabled={submitting}> {submitting ? '신고 중...' : '신고하기'}</button>
+                <button onClick={handleReport} disabled={submitting}> {submitting ? t('report.submitting') : t('report.submit')}</button>
             </div>
         </div>
     )

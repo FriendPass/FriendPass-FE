@@ -11,6 +11,7 @@
         h1 {
             font-weight: 500;
             font-size: 24px;
+            color:#6177F0;
             //letter-spacing: -2%;
         }
     }
@@ -161,6 +162,31 @@
                 box-sizing: border-box;
                 white-space: pre-wrap;
                 overflow-wrap: anywhere;
+
+                button {
+                    font-size: 10px;
+                    font-weight: 400;
+                    color: #888888;
+                    background: transparent;
+                    margin-top: 6px;
+                    margin-bottom: 6px;
+                }
+
+                &.has-translation {
+                    .translated::before {
+                        content: "";
+                        display: block;
+                        border-top: 1px dashed rgba(0, 0, 0, 0.35);
+                        margin: 8px 0 10px;
+                    }
+                }
+
+
+                .translated {
+                    color: #6177F0;
+                    font-size: 12px;
+                    font-weight: 400;
+                }
             }
         }
 

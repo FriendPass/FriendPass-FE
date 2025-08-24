@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
+import { useTranslation } from "react-i18next";
 
 const API_BASE = process.env.REACT_APP_CHAT_API;
 
@@ -26,6 +27,7 @@ const fmtTime = (val) => {
 };
 
 export default function List() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [current, setCurrent] = useState(null);
     const [previous, setPrevious] = useState([]);
@@ -33,7 +35,7 @@ export default function List() {
     useEffect(() => {
         axios.get(LIST_URL, {
             headers: {
-                Authorization: `Bearer ${localStorage.getItem('access_token')}`
+                Authorization: `Bearer ${localStorage.getItem('accessToken')}`
             }
         })
             .then(({ data }) => {
@@ -75,11 +77,11 @@ export default function List() {
     return (
         <div className='List wrap'>
             <div className="header">
-                <h1>채팅 목록</h1>
+                <h1>{t('chatList.title')}</h1>
             </div>
             <div className="main">
                 <div className="current_chat">
-                    <h1>현재 매칭 채팅</h1>
+                    <h1>{t('chatList.currentMatch')}</h1>
                     {current && (
                         <div onClick={moveCurrent} className="room_box">
                             <div className="top">
@@ -92,7 +94,7 @@ export default function List() {
                 </div>
 
                 <div className="previous_chat">
-                    <h1>이전 매칭 채팅</h1>
+                    <h1>{t('chatList.previousMatch')}</h1>
                     <div className="room_list">
                         {previous.map(r => (
                             <div key={r.roomId} className="room_box" onClick={() => movePrevious(r.roomId)}>

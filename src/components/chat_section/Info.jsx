@@ -3,18 +3,20 @@ import back from '../../assets/img/chat_img/back_arrow.png'
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import defaultProfile from '../../assets/img/chat_img/default_profile.png'
+import { useTranslation } from "react-i18next";
 
 const API_BASE = process.env.REACT_APP_CHAT_API;
 
 
 export default function Info() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { roomId } = useParams();
     const INFO_URL = `${API_BASE}/rooms/${roomId}`;
     const Title_URL = `${API_BASE}/rooms/${roomId}/name`
 
     const [isEdit, setIsEdit] = useState(false);
-    const [name, setName] = useState('채팅방 이름');
+    const [name, setName] = useState(t('chatInfo.roomName'))
     const [selectedInterests, setSelectedInterests] = useState([]);
     const [members, setMembers] = useState([]);
 
@@ -91,10 +93,10 @@ export default function Info() {
             </div>
             <div className="main">
                 <div className='top'>
-                    <h2>공통 관심사</h2>
+                    <h2>{t('chatInfo.commonInterests')}</h2>
                     <div className='interest'>
                         {selectedInterests.length === 0 ? (
-                            <p>관심사 정보가 없습니다.</p>
+                            <p>{t('chatInfo.noInterests')}</p>
                         ) : (
                             selectedInterests.map((interest, idx) => (
                                 <button key={idx}>{interest}</button>
@@ -104,13 +106,13 @@ export default function Info() {
                 </div>
 
                 <div className="bottom">
-                    <h2>매칭 멤버</h2>
+                    <h2>{t('chatInfo.members')}</h2>
                     <div className="memebers">
                         {members.length === 0 ? (
-                            <p>멤버의 정보를 불러오는 중...</p>
+                            <p>{t('chatInfo.loadingMembers')}</p>
                         ) : (
                             members.map((m) => (
-                                <div key={m.userId} className="member" onClick={()=>goProfile(m)}>
+                                <div key={m.userId} className="member" onClick={() => goProfile(m)}>
                                     <img src={m.profileImage || defaultProfile} alt="" />
                                     <p>{m.nickname}</p>
                                 </div>

@@ -5,10 +5,12 @@ import axios from 'axios';
 import arrow from '../../assets/img/chat_img/submit_arrow.png';
 import back from '../../assets/img/chat_img/back_arrow.png';
 import info from '../../assets/img/chat_img/info.png';
+import { useTranslation } from "react-i18next";
 
 const API_BASE = process.env.REACT_APP_CHAT_API;
 
 export default function LiveChat({ roomId, userId }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const socket = useSocket();
 
@@ -18,7 +20,7 @@ export default function LiveChat({ roomId, userId }) {
   const textRef = useRef(null);
 
   const goBack = () => {
-    navigate('/');
+    navigate('/chatList');
   }
 
   const goInfo = () => {
@@ -33,7 +35,7 @@ export default function LiveChat({ roomId, userId }) {
       try {
         const { data } = await axios.get(`${API_BASE}/rooms/${roomId}/messages`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
           }
         });
         if (!alive) return;
@@ -72,9 +74,22 @@ export default function LiveChat({ roomId, userId }) {
 
   // 5) 번역 (REST)
   const translateOne = (messageId) => {
+    setMessages((prev) => {
+      const target = prev.find((m) => m.id === messageId);
+      if (target?.translatedText) {
+        return prev.map((m) =>
+          m.id === messageId ? { ...m, translatedText: undefined } : m
+        );
+      }
+      return prev; 
+    });
+
+    // 번역 없을 때만 호출
+    const target = messages.find((m) => m.id === messageId);
+    if (target?.translatedText) return;
     axios.get(`${API_BASE}/messages/${messageId}/translate`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
       }
     })
       .then((response) => {
@@ -103,7 +118,7 @@ export default function LiveChat({ roomId, userId }) {
     <div className='LiveChat wrap'>
       <div className="header">
         <button id="back" onClick={() => { goBack() }}><img src={back} alt="" /></button>
-        <h1>현재 채팅방</h1>
+        <h1>{t('liveChat.currentRoom')}</h1>
         <button id="info" onClick={() => { goInfo() }}><img src={info} alt="" /></button>
       </div>
       <div className="main">
@@ -115,10 +130,10 @@ export default function LiveChat({ roomId, userId }) {
                 {!isMine && <div className="writer" title={m.senderNickname}>
                   {m.senderNickname}
                 </div>}
-                <div className="bubble">
+                <div className={`bubble ${m.translatedText ? 'has-translation' : ''}`}>
                   <span>{m.text}</span>
-                  <button type="button" onClick={() => translateOne(m.id)} style={{ marginLeft: 8 }}>
-                    번역 보기
+                  <button type="button" onClick={() => translateOne(m.id)}>
+                    {m.translatedText ? t('liveChat.hideTranslation') : t('liveChat.translate')}
                   </button>
                   {m.translatedText && <div className="translated">{m.translatedText}</div>}
                 </div>
