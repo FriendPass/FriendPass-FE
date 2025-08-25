@@ -1,0 +1,101 @@
+.rank {
+    background-color: #FFFFFF;
+    padding: 68px 31px;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    height: 765px;
+
+    h1 {
+        font-weight: 500;
+        letter-spacing: -2%;
+        font-size: 24px;
+        margin-left: 1px;
+        color: #6177F0;
+    }
+
+    .my_ranking {
+
+
+        .box {
+            margin-top: 22px;
+            background: linear-gradient(90deg, #9FABEF 0%, #6177F0 100%);
+            color: #FFFFFF;
+            padding: 29px 31px 28px 24px;
+            box-sizing: border-box;
+        }
+    }
+
+    .all_ranking {
+        h2 {
+            margin-bottom: 32px;
+        }
+
+        .box_list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            .box {
+                background: linear-gradient(90deg, #FFFFFF 0%, rgba(221, 225, 248, 0.34) 100%);
+                padding: 29px 23px 28px 24px;
+                box-sizing: border-box;
+            }
+
+            .top_1 {
+                #rank {
+                    color: #EFAC1B;
+                }
+            }
+
+            .top_2 {
+                #rank {
+                    color: #898989;
+                }
+            }
+
+            .top_3 {
+                #rank {
+                    color: #6D4E0A;
+                }
+            }
+        }
+    }
+
+    .my_ranking,
+    .all_ranking {
+        margin-top: 40px;
+        align-items: center;
+
+        h2 {
+            font-size: 14px;
+            font-weight: 500;
+            color: #000000;
+            //letter-spacing: -2%;
+        }
+
+        .box {
+            display: flex;
+            width: 329px;
+            height: 74px;
+            border-radius: 16px;
+            box-shadow: 0px 2px 4px 0px #00000040;
+
+            .content {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                p,
+                span {
+                    font-size: 14px;
+                    font-weight: 500;
+                    //letter-spacing:-2%;
+                }
+                #name{
+                    margin-right: 5px;
+                }
+            }
+        }
+    }
+}

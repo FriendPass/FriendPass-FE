@@ -1,0 +1,57 @@
+.nav_wrap {
+    height: 79px;
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    align-items: center;
+    padding: 18px 37px 16px 44px;
+    box-sizing: border-box;
+    border-top: 1px solid #888888;
+
+    .nav_icon {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        img {
+            object-fit: cover;
+        }
+
+        p {
+            font-weight: 400;
+            font-size: 10px;
+        }
+    }
+
+    #match {
+        gap: 4.72px;
+        img {
+            width: 25px;
+            height: 23.78px;
+        }
+    }
+
+    #chat {
+        gap: 5.63px;
+        img {
+            width: 25.5px;
+            height: 21.75px;
+        }
+    }
+
+    #rank {
+        gap: 4.29px;
+        img {
+            width: 18.08px;
+            height: 28.42px;
+        }
+    }
+
+    #account {
+        gap: 7.88px;
+        img {
+            width: 20.67px;
+            height: 23.25px;
+        }
+    }
+}

@@ -1,0 +1,263 @@
+{
+  "login": {
+    "placeholder": {
+      "email": "이메일",
+      "password": "비밀번호"
+    },
+    "button": "로그인",
+    "link": "학교 이메일로 회원가입하기 →"
+  },
+  "language": {
+    "title": "언어를 선택해주세요",
+    "korean": "한국어",
+    "english": "English",
+    "confirm": "확인",
+    "firstTime": "가 처음이신가요?",
+    "sendCode": "인증하기"
+  },
+  "signup": {
+    "title": "회원가입을 위해 기본 정보를 입력해주세요.",
+    "email": "학교 이메일",
+    "code": "인증번호",
+    "password": "비밀번호",
+    "nickname": "닉네임",
+    "button": "가입하기",
+    "sendCode":"인증하기"
+  },
+    "unv": {
+    "firstTime": "가 처음이신가요?",
+    "selectSchool": "학교를 선택해주세요",
+    "confirm": "확인"
+  },
+    "student": {
+    "firstTime": "가 처음이신가요?",
+    "selectType": "외국 교환학생인지 한국 학생인지 알려주세요.",
+    "korean": "한국 학생이에요!",
+    "foreigner": "외국 교환학생이에요!"
+  },
+    "nation": {
+    "firstTime": "가 처음이신가요?",
+    "selectTitle": "국적을 선택해주세요",
+    "searchPlaceholder": "검색",
+    "confirm": "확인"
+  },
+    "interest": {
+    "title1": "무엇에 관심이 있으신가요?",
+    "title2": "관심사를 기반으로 교환학생과 한국학생을",
+    "title3": "AI가 매칭해드려요.",
+    "title4": "최대 3개 선택할 수 있어요.",
+    "button": "FriendPass 시작하기",
+    "alertMax": "최대 3개까지 선택할 수 있습니다.",
+    "alertFail": "관심사 저장 실패",
+    "options": ["전통문화","전시","맛집","카페","이색문화체험",
+                "산책","쇼핑","K-pop","역사","패션","힐링"]
+  },
+    "matched": {
+    "title": "매칭",
+    "current": "현재 매칭",
+    "completeMsg": "매칭이 완료되었어요! 채팅에서 대화해 보세요",
+    "rewardButton": "인증 및 리워드 받기",
+    "commonInterests": "공통 관심사",
+    "placeList": "장소 추천 리스트",
+    "members": "매칭 멤버",
+    "loadingMembers": "멤버의 정보를 불러오는 중...",
+    "endMatching": "매칭종료하기",
+    "locationAlert": "위치 정보 제공에 동의해야 인증이 가능합니다.",
+    "geolocationUnsupported": "브라우저에서 위치 정보를 지원하지 않습니다.",
+    "locationFail": "위치 정보를 가져오지 못했습니다.",
+    "serverFail": "서버 요청에 실패했습니다.",
+    "selectInterests": {
+      "맛집": "맛집",
+      "전통문화": "전통문화",
+      "산책": "산책",
+      "전시": "전시",
+      "카페": "카페",
+      "이색문화체험": "이색문화체험",
+      "쇼핑": "쇼핑",
+      "K-pop": "K-pop",
+      "역사": "역사",
+      "패션": "패션",
+      "힐링": "힐링"
+    }
+  },
+    "matching": {
+    "title": "매칭",
+    "current": "현재 매칭",
+    "settings": "매칭 설정",
+    "unvregion": "장소",
+    "interests": "설정된 관심사",
+    "interestsNote": "관심사는 설정에서 최대 3개 변경 및 설정할 수 있어요!",
+    "match": "매칭하기",
+    "retry": "재매칭",
+    "noInfo": "현재 매칭 정보가 없어요.",
+    "noInfo2":  "AI 관심사 기반 맞춤 매칭을 시작해보세요!",
+    "waiting": "에 매칭 결과가 나와요!",
+    "failed": "이번에는 매칭에 실패했어요.",
+    "failed2": "다시 매칭하고 싶다면 아래에서 재매칭을 시작해주세요!",
+    "restricted": "매칭 종료로 인해 일시적으로 제한되었습니다.",
+    "tryLater": "잠시 후 다시 시도해주세요.",
+    "selectRegion": "먼저 지역을 선택해주세요.",
+    "fail": "매칭 요청에 실패했습니다.",
+    "region": {
+      "국민": "국민",
+      "성신": "성신",
+      "동덕": "동덕"
+    },
+    "selectInterests": {
+      "맛집": "맛집",
+      "전통문화": "전통문화",
+      "산책": "산책",
+      "전시": "전시",
+      "카페": "카페",
+      "이색문화체험": "이색문화체험",
+      "쇼핑": "쇼핑",
+      "k-pop": "k-pop",
+      "역사": "역사",
+      "패션": "패션",
+      "힐링": "힐링"
+    }
+  },
+    "yougetreward": {
+    "complete1": "매칭 활동 인증이",
+    "complete2": "완료되었습니다!",
+    "reward1": "리워드 획득을",
+    "reward2": "축하해요!",
+    "button": "매칭 홈으로 가기"
+  },
+    "mypage": {
+    "title": "마이페이지",
+    "profileSetting": "프로필 설정",
+    "interestSetting": "관심사 설정",
+    "languageSetting": "언어 설정",
+    "logout": "로그아웃",
+    "deleteUser": "회원탈퇴",
+    "logoutSuccess": "로그아웃 되었습니다.",
+    "logoutFail": "로그아웃 중 문제가 발생했습니다.",
+    "deleteConfirm": "정말로 회원탈퇴 하시겠습니까?",
+    "deleteSuccess": "회원탈퇴가 완료되었습니다.",
+    "deleteFail": "회원탈퇴 중 문제가 발생했습니다."
+  },
+    "menu": {
+    "matching": "매칭",
+    "chat": "채팅",
+    "ranking": "랭킹",
+    "mypage": "마이페이지"
+    },
+    "agree": {
+  "title": "위치정보 접근 권한 안내",
+  "description1": "FriendPass는 사용자의 위치를 기반으로",
+  "description2": "매칭 장소를 추천하는 서비스입니다.",
+  "description3":"원활한 서비스 이용을 위해서는",
+  "description4":"위치정보 접근 권한이 필수적입니다.",
+  "confirm": "확인",
+  "success": "위치 권한이 허용되었습니다!",
+  "errors": {
+    "notSupported": "이 브라우저에서는 위치 정보를 지원하지 않습니다.",
+    "permissionDenied": "위치 정보 권한을 허용해야 서비스 이용이 가능합니다.",
+    "unavailable": "위치 정보를 사용할 수 없습니다.",
+    "timeout": "위치 정보를 불러오는 데 시간이 초과되었습니다.",
+    "unknown": "알 수 없는 오류가 발생했습니다."
+  }
+},
+  "certify": {
+    "title": "잠시만요!",
+    "line1": "매칭 후 이틀이 지나지 ",
+    "line2": "않았기 때문에",
+    "line3": "매칭을 종료할 수 없습니다.",
+    "confirmButton": "확인"
+  },
+    "profile": {
+    "title": "프로필 설정",
+    "changeImage": "사진 변경",
+    "delete": "삭제",
+    "deleteConfirm": "프로필 사진을 삭제하시겠습니까?",
+    "deleteSuccess": "프로필 사진이 삭제되었습니다.",
+    "deleteFail": "삭제 중 문제가 발생했습니다.",
+    "nickname": "닉네임",
+    "school": "학교",
+    "nationality": "국적",
+    "confirm": "확인",
+    "updateSuccess": "프로필이 성공적으로 수정되었습니다!",
+    "updateFail": "프로필 수정 실패"
+  },
+    "modifyLanguage": {
+    "selectPrompt": "사용 언어를 선택해주세요",
+    "alertSelect": "언어를 선택해주세요.",
+    "confirm": "확인"
+  },
+    "modifyInterest": {
+    "prompt": "무엇에 관심이 있으신가요?",
+    "description1": "관심사를 기반으로 교환학생과 한국학생을",
+    "description2": "AI가 매칭해드려요.",
+    "description3": "최대 3개 선택할 수 있어요.",
+    "alertMax3": "최대 3개까지 선택할 수 있습니다.",
+    "alertSaveFail": "관심사 저장 실패",
+    "startButton": "FriendPass 시작하기",
+    "options": {
+      "전통문화": "전통문화",
+      "전시": "전시",
+      "맛집": "맛집",
+      "카페": "카페",
+      "이색문화체험": "이색문화체험",
+      "산책": "산책",
+      "쇼핑": "쇼핑",
+      "K-pop": "K-pop",
+      "역사": "역사",
+      "패션": "패션",
+      "힐링": "힐링"
+    }
+  },
+  "chatInfo": {
+    "roomName": "채팅방 이름",
+    "commonInterests": "공통 관심사",
+    "noInterests": "관심사 정보가 없습니다.",
+    "members": "매칭 멤버",
+    "loadingMembers": "멤버의 정보를 불러오는 중..."
+  },
+  "chatList": {
+    "title": "채팅 목록",
+    "currentMatch": "현재 매칭 채팅",
+    "previousMatch": "이전 매칭 채팅"
+  },
+  "liveChat": {
+    "translate": "번역 보기",
+    "hideTranslation": "번역 닫기",
+    "currentRoom": "현재 매칭 채팅"
+  },
+  "report": {
+    "title": "어떤 이유로 신고하시나요?",
+    "categories": {
+      "abuse": "욕설/비하",
+      "sexual": "성희롱/부적절한 언행",
+      "spam": "스팸/광고",
+      "fraud": "사기/금전 요구",
+      "offline": "오프라인 위협/위험 행동",
+      "other": "기타(직접 작성)"
+    },
+    "otherPlaceholder": "자세한 사유를 입력해 주세요",
+    "submitting": "신고 중...",
+    "submit": "신고하기",
+    "valid": {
+      "selectCategory": "신고 사유를 선택해주세요.",
+      "enterOther": "기타 사유를 입력해주세요."
+    }
+  },
+  "reportModal": {
+    "confirmText": "사용자를 신고하시겠습니까?"
+  },
+  "reportProfile": {
+    "user": "사용자",
+    "reportUser": "사용자 신고하기"
+  },
+  "common": {
+    "confirm": "확인"
+  },
+  "ranking": {
+    "title": "랭킹",
+    "myRankTitle": "나의 랭킹",
+    "allRankTitle": "전체 랭킹",
+    "rank": "{{n}}등",
+    "stampsWithSpace": "리워드 도장 {{n}}개",
+    "stampsNoSpace": "리워드 도장{{n}}개"
+  }
+}

@@ -1,0 +1,262 @@
+{
+  "login": {
+    "placeholder": {
+      "email": "Enter your email",
+      "password": "Enter your password"
+    },
+    "button": "Sign in",
+    "link": "Sign up with your school email →"
+  },
+  "language": {
+    "title": "Select your language",
+    "korean": "Korean",
+    "english": "English",
+    "confirm": "Confirm",
+    "firstTime": "First time here?"
+  },
+  "signup": {
+    "title": "Please enter your basic information to sign up.",
+    "email": "School email",
+    "code": "Verification code",
+    "password": "Password",
+    "nickname": "Nickname",
+    "button": "Sign up",
+    "sendCode": "Send code"
+  },
+    "unv": {
+    "firstTime": "Is this your first time?",
+    "selectSchool": "Please select your school",
+    "confirm": "Confirm"
+  },
+    "student": {
+    "firstTime": "Is this your first time here?",
+    "selectType": "Please let us know if you are a Korean student or an international exchange student.",
+    "korean": "I am a Korean student!",
+    "foreigner": "I am an international exchange student!"
+  },
+    "nation": {
+    "firstTime": "Is this your first time here?",
+    "selectTitle": "Please select your nationality",
+    "searchPlaceholder": "Search",
+    "confirm": "Confirm"
+  },
+    "interest": {
+    "title1": "What are you interested in?",
+    "title2": "AI will match international and Korean students",
+    "title3": "based on your interests.",
+    "title4": "You can select up to 3 interests.",
+    "button": "Start FriendPass",
+    "alertMax": "You can select up to 3 interests.",
+    "alertFail": "Failed to save interests",
+    "options": ["Traditional Culture","Exhibition","Food","Cafe","Unique Experiences",
+                "Walk","Shopping","K-pop","History","Fashion","Healing"]
+  },
+    "matched": {
+    "title": "Matching",
+    "current": "Current Match",
+    "completeMsg": "Matching is complete! Chat with partners.",
+    "rewardButton": "Certify & Get Reward",
+    "commonInterests": "Common Interests",
+    "placeList": "Recommended Places",
+    "members": "Matched Members",
+    "loadingMembers": "Loading member information...",
+    "endMatching": "End Matching",
+    "locationAlert": "You must agree to share your location to certify.",
+    "geolocationUnsupported": "Your browser does not support geolocation.",
+    "locationFail": "Failed to get your location.",
+    "serverFail": "Server request failed.",
+    "selectInterests": {
+      "맛집": "Restaurants",
+      "전통문화": "Traditional Culture",
+      "산책": "Walk",
+      "전시": "Exhibition",
+      "카페": "Cafe",
+      "이색문화체험": "Unique Experiences",
+      "쇼핑": "Shopping",
+      "k-pop": "k-pop",
+      "역사": "History",
+      "패션": "Fashion",
+      "힐링": "Healing"
+    }
+  },
+    "matching": {
+    "title": "Matching",
+    "current": "Current Matching",
+    "settings": "Matching Settings",
+    "unvregion": "Region",
+    "interests": "Selected Interests",
+    "interestsNote": "You can change and set up to 3 interests in settings!",
+    "match": "Start Matching",
+    "retry": "Rematch",
+    "noInfo": "No matching information yet.",
+    "noInfo2": "Start a personalized match based on AI interests!",
+    "waiting": "Matching result will be available on {{date}}!",
+    "failed": "Matching failed this time.",
+    "failed2": "If you want to try again, start rematching below!",
+    "restricted": "Matching is temporarily restricted due to ending.",
+    "tryLater": "Please try again later.",
+    "selectRegion": "Please select a region first.",
+    "fail": "Matching request failed.",
+    "region": {
+      "국민": "Gukmin",
+      "성신": "Sungshin",
+      "동덕": "Dongduk"
+    },
+    "selectInterests": {
+      "맛집": "Restaurants",
+      "전통문화": "Traditional Culture",
+      "산책": "Walk",
+      "전시": "Exhibition",
+      "카페": "Cafe",
+      "이색문화체험": "Unique Experiences",
+      "쇼핑": "Shopping",
+      "K-pop": "K-pop",
+      "역사": "History",
+      "패션": "Fashion",
+      "힐링": "Healing"
+    }
+  },
+    "yougetreward": {
+    "complete1": "Your matching activity",
+    "complete2": "has been completed!",
+    "reward1": "reward earned!",
+    "reward2": "Congratulations!",
+    "button": "Go to Matching Home"
+  },
+    "mypage": {
+    "title": "My Page",
+    "profileSetting": "Profile Settings",
+    "interestSetting": "Interest Settings",
+    "languageSetting": "Language Settings",
+    "logout": "Logout",
+    "deleteUser": "Delete Account",
+    "logoutSuccess": "You have been logged out.",
+    "logoutFail": "There was a problem logging out.",
+    "deleteConfirm": "Are you sure you want to delete your account?",
+    "deleteSuccess": "Your account has been deleted.",
+    "deleteFail": "There was a problem deleting your account."
+  },
+    "menu": {
+    "matching": "Matching",
+    "chat": "Chat",
+    "ranking": "Ranking",
+    "mypage": "My Page"
+    },
+    "agree": {
+  "title": "Location Access Permission",
+  "description1": "FriendPass is based on the user's location",
+  "description2": "to recommend matching places.",
+  "description3": "For smooth service use,",
+  "description4": "location access permission is required.",
+  "confirm": "OK",
+  "success": "Location permission granted!",
+  "errors": {
+    "notSupported": "This browser does not support location services.",
+    "permissionDenied": "You must allow location access to use the service.",
+    "unavailable": "Location information is not available.",
+    "timeout": "Timeout while retrieving location information.",
+    "unknown": "An unknown error occurred."
+  }
+},
+  "certify": {
+    "title": "Wait a moment!",
+    "line1": "You cannot end the matching",
+    "line2": "because two days have not passed",
+    "line3": "since the match.",
+    "confirmButton": "Confirm"
+  },
+    "profile": {
+    "title": "Profile Settings",
+    "changeImage": "Change Photo",
+    "delete": "Delete",
+    "deleteConfirm": "Do you want to delete the profile photo?",
+    "deleteSuccess": "Profile photo has been deleted.",
+    "deleteFail": "An error occurred while deleting.",
+    "nickname": "Nickname",
+    "school": "School",
+    "nationality": "Nationality",
+    "confirm": "Confirm",
+    "updateSuccess": "Profile updated successfully!",
+    "updateFail": "Profile update failed"
+  },
+    "modifyLanguage": {
+    "selectPrompt": "Please select your language",
+    "alertSelect": "Please select a language.",
+    "confirm": "Confirm"
+  },
+    "modifyInterest": {
+    "prompt": "What are your interests?",
+    "description1": "Based on your interests,",
+    "description2": "AI will match you with exchange students in Korea.",
+    "description3": "You can select up to 3 options.",
+    "alertMax3": "You can select up to 3 options.",
+    "alertSaveFail": "Failed to save interests",
+    "startButton": "Start FriendPass",
+    "options": {
+      "전통문화": "Traditional Culture",
+      "전시": "Exhibition",
+      "맛집": "Restaurants",
+      "카페": "Cafe",
+      "이색문화체험": "Unique Cultural Experience",
+      "산책": "Walking",
+      "쇼핑": "Shopping",
+      "K-pop": "K-pop",
+      "역사": "History",
+      "패션": "Fashion",
+      "힐링": "Healing"
+    }
+  },
+  "chatInfo": {
+    "roomName": "Chat Room Name",
+    "commonInterests": "Common Interests",
+    "noInterests": "No interest information.",
+    "members": "Matched Members",
+    "loadingMembers": "Loading member information..."
+  },
+  "chatList": {
+    "title": "Chat List",
+    "currentMatch": "Current Match Chat",
+    "previousMatch": "Previous Match Chat"
+  },
+  "liveChat": {
+    "translate": "Show translation",
+    "hideTranslation": "Hide translation",
+    "currentRoom": "Current Match Chat"
+  },
+  "report": {
+    "title": "Why are you reporting?",
+    "categories": {
+      "abuse": "Abuse/Insult",
+      "sexual": "Sexual Harassment/Inappropriate Behavior",
+      "spam": "Spam/Ads",
+      "fraud": "Fraud/Money Request",
+      "offline": "Offline Threat/Risky Behavior",
+      "other": "Other (write directly)"
+    },
+    "otherPlaceholder": "Please enter the details",
+    "submitting": "Submitting...",
+    "submit": "Submit Report",
+    "valid": {
+      "selectCategory": "Please select a reason.",
+      "enterOther": "Please enter the other reason."
+    }
+  },
+  "reportModal": {
+    "confirmText": "Do you want to report this user?"
+  },
+  "reportProfile": {
+    "user": "User",
+    "reportUser": "Report User"
+  },
+  "common": {
+    "confirm": "Confirm"
+  },
+  "ranking": {
+    "title": "Ranking",
+    "myRankTitle": "My Ranking",
+    "allRankTitle": "Overall Ranking",
+    "rank": "Rank {{n}}",
+    "stampsWithSpace": "Reward Stamps {{n}}",
+    "stampsNoSpace": "Reward Stamps{{n}}"
+  }
+}
