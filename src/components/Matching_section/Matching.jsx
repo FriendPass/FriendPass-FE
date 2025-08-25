@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Agree from '../modal/Agree';
-import { requestMatching, getMyMatching} from "../../api/matching";
+import { requestMatching, getMyMatching, getMyMatchingMember } from "../../api/matching";
 import { useNavigate } from "react-router-dom"; 
 import { useTranslation } from 'react-i18next';
 
@@ -18,14 +18,8 @@ function Matching() {
   const displayRegions = ["국민", "성신", "동덕"].map(r => t(`region.${r}`)); 
   const displayInterests = interests.map(i => t(`matching.interests.${i}`)); 
 
-  // 더미 데이터
-useEffect(() => {
-  const dummyInterests = ["맛집", "전통문화", "산책"];
-  setInterests(dummyInterests);
-}, []);
-
-  // ------------ Utils: 2일 제한 체크 & 남은시간 표시 ------------
-  const updateDisabledFromStorage = () => {
+  //  Utils: 2일 제한 체크 & 남은시간 표시 
+  /*const updateDisabledFromStorage = () => {
     const until = localStorage.getItem("matchingDisabledUntil");
     if (!until) {
       setIsDisabled(false);
@@ -36,7 +30,8 @@ useEffect(() => {
       setIsDisabled(true);
     } else {
       setIsDisabled(false);
-      localStorage.removeItem("matchingDisabledUntil");
+      const oneMinute = 5 * 60 * 1000;
+localStorage.setItem("matchingDisabledUntil", Date.now() + oneMinute);
     }
   };
 
@@ -53,7 +48,7 @@ useEffect(() => {
     if (hours > 0) return `${hours}h ${mins}m`;
     return `${mins}m`;
   };
-
+*/
   // 페이지 로드 시 위치 정보 동의 여부 확인
     useEffect(() => {
     const agreed = localStorage.getItem("locationAgreed");
@@ -77,9 +72,14 @@ useEffect(() => {
           setSelectedRegion(data.region);
           localStorage.setItem("selectedRegion", data.region);
         }
-
+      // 매칭 시간 계산 (대기중이면 현재 시간 기준)
+      if (data.status === "대기중") {
+        const roundedTime = roundToNext30Min(new Date());
+        const formatted = `${roundedTime.getHours()}시 ${roundedTime.getMinutes() === 0 ? '00' : '30'}분`;
+        setMatchDate(formatted);
+      }
         // 제한시간 초과 체크 (예시: 24시간)
-        if (data.matchedAt) {
+        /*if (data.matchedAt) {
           const matchedTime = new Date(data.matchedAt).getTime();
           const now = Date.now();
           const oneDay = 24 * 60 * 60 * 1000;
@@ -88,21 +88,26 @@ useEffect(() => {
             setSelectedRegion(null); // 버튼 색 초기화
             localStorage.removeItem("selectedRegion");
           }
-        }
+        }*/
 
-        if (data.status === "success") {
-          navigate("/matched");
-        }
-      } catch (err) {
-        console.error("매칭 상태 조회 실패:", err);
+      // 2️⃣ 매칭 완료 여부 조회
+      const completeData = await getMyMatchingMember();
+      if (completeData?.members?.length > 0) {
+        // 완료된 매칭이 있으면 바로 matched 페이지로 이동
+        navigate("/matched");
       }
-    };
-    updateDisabledFromStorage(); 
+
+    } catch (err) {
+      console.error("매칭 상태 조회 실패:", err);
+    }
+  };
+
+    //updateDisabledFromStorage(); 
     fetchMatching();
     // 탭에 다시 포커스될 때 제한 갱신
-    const onFocus = () => updateDisabledFromStorage();
+    /*const onFocus = () => updateDisabledFromStorage();
     window.addEventListener("focus", onFocus);
-    return () => window.removeEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);*/
 
   }, [navigate]);
 
@@ -117,15 +122,21 @@ useEffect(() => {
     localStorage.setItem("selectedRegion", region);
   };
 
+  // 30분 단위 반올림
+  const roundToNext30Min = (date) => {
+    const ms = 1000 * 60 * 30; // 30분
+    return new Date(Math.ceil(date.getTime() / ms) * ms);
+  };
+
   // 매칭 신청 / 재매칭
   const handleMatchingClick = async () => {
-    updateDisabledFromStorage();
+   /* updateDisabledFromStorage();
     if (isDisabled) {
       const remain = getRemainingText();
        alert(`${t('matching.restricted')}\n${getRemainingText() || t('matching.tryLater')}`);
       return;
     }
-
+*/
     if (!selectedRegion) {
       alert(t('matching.selectRegion'));
       return;
@@ -133,10 +144,14 @@ useEffect(() => {
 
     try {
       const data = await requestMatching(selectedRegion);
-      setStatus(data.status || "대기중");
-      setMatchDate(data.matchDate || new Date().toISOString().slice(0, 10));
 
-      if (data.status === "success") {
+      // 현재 시간 30분 단위 반올림
+      const roundedTime = roundToNext30Min(new Date());
+      const formatted = `${roundedTime.getHours()}시 ${roundedTime.getMinutes() === 0 ? '00' : '30'}분`;
+      setMatchDate(formatted);
+      setStatus(data.status || "대기중");
+
+      if (data.status === "수락") {
         navigate("/matched");
       }
     } catch (err) {
@@ -146,14 +161,13 @@ useEffect(() => {
   };
 
   const renderMessage = () => {
-    if (isDisabled) return <p className="matching-p3">{t('matching.restricted')}<br />{getRemainingText()}</p>;
-    if (status === "none") return <p className="matching-p3">{t('matching.noInfo')}</p>;
-    if (status === "대기중") return <p className="matching-p3">{t('matching.waiting', { date: matchDate })}</p>;
-    if (status === "failed") return <p className="matching-p3">{t('matching.failed')}</p>;
+    //if (isDisabled) return <p className="matching-p3">{t('matching.restricted')}<br />{getRemainingText()}</p>;
+    if (status === "none") return <p className="matching-p3">{t('matching.noInfo')}<br />{t('matching.noInfo2')}</p>;
+    if (status === "대기중") return <p className="matching-p3">{matchDate }{t('matching.waiting')}</p>;
+    if (status === "failed") return <p className="matching-p3">{t('matching.failed')}<br />{t('matching.failed2')}</p>;
   };
 
   return (
-    <div className='wrap'>
       <div className="matching-wrap">
       <div className="matiching-nav">
         <svg className='matching-logo' width="121" height="18" viewBox="0 0 121 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -200,18 +214,19 @@ useEffect(() => {
       >
          {status === "failed" ? t('matching.retry') : t('matching.match')}
       </button>
+{/*
       <div className="footer">
         <div className='matching-footer'>
         <div className="matching-menu-home">
           <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M15 2.5L18.8625 10.325L27.5 11.5875L21.25 17.675L22.725 26.275L15 22.2125L7.275 26.275L8.75 17.675L2.5 11.5875L11.1375 10.325L15 2.5Z" fill="#6177F0" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M15 2.5L18.8625 10.325L27.5 11.5875L21.25 17.675L22.725 26.275L15 22.2125L7.275 26.275L8.75 17.675L2.5 11.5875L11.1375 10.325L15 2.5Z" fill="#6177F0" stroke="black" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
 <p>{t("menu.matching")}</p>
         </div>
         <a href="/chatList">
         <div className="menu-chat">
           <svg width="34" height="29" viewBox="0 0 34 29" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M29.75 13.8958C29.7549 15.4906 29.318 17.0639 28.475 18.4875C27.4754 20.1933 25.9388 21.6281 24.0372 22.6312C22.1356 23.6342 19.9442 24.1659 17.7083 24.1666C15.8385 24.1708 13.994 23.7982 12.325 23.0791L4.25 25.375L6.94167 18.4875C6.09865 17.0639 5.66179 15.4906 5.66667 13.8958C5.66753 11.9888 6.29087 10.1196 7.46685 8.49764C8.64284 6.87569 10.325 5.56503 12.325 4.71247C13.994 3.99343 15.8385 3.62082 17.7083 3.62497H18.4167C21.3695 3.76392 24.1585 4.82698 26.2496 6.61059C28.3408 8.39421 29.5871 10.7731 29.75 13.2916V13.8958Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M29.75 13.8958C29.7549 15.4906 29.318 17.0639 28.475 18.4875C27.4754 20.1933 25.9388 21.6281 24.0372 22.6312C22.1356 23.6342 19.9442 24.1659 17.7083 24.1666C15.8385 24.1708 13.994 23.7982 12.325 23.0791L4.25 25.375L6.94167 18.4875C6.09865 17.0639 5.66179 15.4906 5.66667 13.8958C5.66753 11.9888 6.29087 10.1196 7.46685 8.49764C8.64284 6.87569 10.325 5.56503 12.325 4.71247C13.994 3.99343 15.8385 3.62082 17.7083 3.62497H18.4167C21.3695 3.76392 24.1585 4.82698 26.2496 6.61059C28.3408 8.39421 29.5871 10.7731 29.75 13.2916V13.8958Z" stroke="#1E1E1E" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
 <p>{t("menu.chat")}</p> 
         </div>
@@ -219,7 +234,7 @@ useEffect(() => {
         <a href="/ranking">
         <div className="menu-lank">
           <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10.6045 17.9413L9.04159 29.7084L15.4999 25.8334L21.9583 29.7084L20.3953 17.9284M24.5416 10.3334C24.5416 15.3269 20.4935 19.375 15.4999 19.375C10.5063 19.375 6.45825 15.3269 6.45825 10.3334C6.45825 5.33978 10.5063 1.29169 15.4999 1.29169C20.4935 1.29169 24.5416 5.33978 24.5416 10.3334Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10.6045 17.9413L9.04159 29.7084L15.4999 25.8334L21.9583 29.7084L20.3953 17.9284M24.5416 10.3334C24.5416 15.3269 20.4935 19.375 15.4999 19.375C10.5063 19.375 6.45825 15.3269 6.45825 10.3334C6.45825 5.33978 10.5063 1.29169 15.4999 1.29169C20.4935 1.29169 24.5416 5.33978 24.5416 10.3334Z" stroke="#1E1E1E" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
 <p>{t("menu.ranking")}</p>
         </div>
@@ -227,14 +242,14 @@ useEffect(() => {
         <a href="/mypage">
         <div className="menu-mypage">
           <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M25.8333 27.125V24.5417C25.8333 23.1714 25.2889 21.8572 24.32 20.8883C23.3511 19.9193 22.0369 19.375 20.6666 19.375H10.3333C8.96301 19.375 7.64885 19.9193 6.67991 20.8883C5.71097 21.8572 5.16663 23.1714 5.16663 24.5417V27.125M20.6666 9.04167C20.6666 11.8951 18.3534 14.2083 15.5 14.2083C12.6465 14.2083 10.3333 11.8951 10.3333 9.04167C10.3333 6.1882 12.6465 3.875 15.5 3.875C18.3534 3.875 20.6666 6.1882 20.6666 9.04167Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M25.8333 27.125V24.5417C25.8333 23.1714 25.2889 21.8572 24.32 20.8883C23.3511 19.9193 22.0369 19.375 20.6666 19.375H10.3333C8.96301 19.375 7.64885 19.9193 6.67991 20.8883C5.71097 21.8572 5.16663 23.1714 5.16663 24.5417V27.125M20.6666 9.04167C20.6666 11.8951 18.3534 14.2083 15.5 14.2083C12.6465 14.2083 10.3333 11.8951 10.3333 9.04167C10.3333 6.1882 12.6465 3.875 15.5 3.875C18.3534 3.875 20.6666 6.1882 20.6666 9.04167Z" stroke="#1E1E1E" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
 <p>{t("menu.mypage")}</p>
         </div>
         </a>
         </div>
       </div>
-
+*/}
       {showAgree && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -243,7 +258,7 @@ useEffect(() => {
         </div>
       )}
       </div>
-    </div>
+
   );
 }
 

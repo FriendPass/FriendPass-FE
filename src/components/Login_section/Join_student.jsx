@@ -7,21 +7,21 @@ function Join_student() {
   const { t } = useTranslation();
   const [nationality, setNationality] = useState("");
   const navigate = useNavigate();
+  const [selectedSchoolId, setSelectedSchoolId] = useState(null);
+// 버튼 클릭 핸들러
+const handleSelect = (value) => {
+  if (value === 'KR') {
+    localStorage.setItem('selectedNationality', 'KR');
+    localStorage.setItem('isExchange', JSON.stringify(false));
+    navigate("/join", { state: { schoolId: localStorage.getItem('selectedSchoolId') } }); // 바로 회원가입 페이지
+  } else if (value === 'EX') {
+    localStorage.setItem('selectedNationality', ''); 
+    localStorage.setItem('isExchange', JSON.stringify(true));
+    navigate("/joinNation"); // 국적 선택 페이지
+  }
+  setNationality(value); // 상태 업데이트
+};
 
-  // 버튼 클릭 핸들러
-  const handleSelect = (value) => {
-    setNationality(value);
-
-    if (value === 'KR') {
-      localStorage.setItem('selectedNationality', 'KR'); 
-      localStorage.setItem('isExchange', JSON.stringify(false));
-      navigate("/join"); // 바로 회원가입 페이지
-    } else if (value === 'EX') {
-      localStorage.setItem('selectedNationality', ''); 
-      localStorage.setItem('isExchange', JSON.stringify(true));
-      navigate("/joinNation"); // 국적 선택 페이지
-    }
-  };
   
   return (
     <div className='wrap'>
@@ -41,22 +41,20 @@ function Join_student() {
     <h1>{t('student.selectType')}</h1>
     </div>
     <div className="join-std-box2">
-      <a href="/join">
-    <button
+
+<button
   className={`korean ${nationality === 'KR' ? 'active' : ''}`}
-  onClick={() => handleSelect('한국인')}
+  onClick={() => handleSelect('KR')}
 >
   {t('student.korean')}
 </button>
-</a>
-<a href="/joinNation">
-      <button
+
+<button
   className={`foreigner ${nationality === 'EX' ? 'active' : ''}`}
-  onClick={() => handleSelect('외국인')}
+  onClick={() => handleSelect('EX')}
 >
   {t('student.foreigner')}
 </button>
-</a>
       </div>
     </div>
     </div>

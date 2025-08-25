@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import {getMyProfile, updateNickname, updateProfileImage, deleteProfileImage} from "../../api/users";
 import DEFAULT_PROFILE_IMAGE from "../../assets/img/basicprofile.png";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const [nickname, setNickname] = useState("");
   const [schoolName, setSchoolName] = useState(""); // 학교 이름
@@ -33,6 +35,7 @@ const Profile = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    console.log("📥 선택된 파일:", file); 
     if (file) {
       setSelectedImage(file);
       setPreviewImage(URL.createObjectURL(file));
@@ -58,9 +61,13 @@ const Profile = () => {
         await updateNickname(nickname);
       }
       if (selectedImage) {
+        console.log("📤 업로드할 selectedImage:", selectedImage);
         await updateProfileImage(selectedImage);
       }
+      const updated = await getMyProfile();
+      setPreviewImage(updated.profileImage);
       alert(t('profile.updateSuccess'));
+      navigate('/mypage');
     } catch (err) {
       console.error(err);
       alert(t('profile.updateFail'));
@@ -87,6 +94,10 @@ const Profile = () => {
                   src={previewImage}
                   alt=""
                   style={{ width: "100%", height: "100%", objectFit: "cover",borderRadius: "18px" }}
+                        onError={(e) => {
+        e.target.onerror = null;
+        e.target.src = DEFAULT_PROFILE_IMAGE;
+      }}
                 />
               ) : (
                 <span>+</span>

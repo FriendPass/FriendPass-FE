@@ -1,22 +1,20 @@
 import axios from 'axios';
-
+//console.log('BASE=', process.env.REACT_APP_BASE);
 const api = axios.create({
-  baseURL: process.env.REACT_APP_BASE, // ngrok URL 예시
+  baseURL: process.env.REACT_APP_BASE, 
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// 요청 인터셉터
+// ✅ 요청 인터셉터
 api.interceptors.request.use(
   (config) => {
-    // 실제 로그인 후 발급받은 JWT만 사용
     const token = localStorage.getItem("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     console.log("[API] 요청 시작:", config.method.toUpperCase(), config.url, "헤더:", config.headers.Authorization || "없음");
     return config;
   },

@@ -55,6 +55,8 @@ export default function App() {
           <Route element={<LayoutwithNav />}>
             <Route path="/ranking" element={<Ranking />} />
             <Route path="/chatList" element={<ChatList />} />
+            <Route path="/matching" element={<Matching />} />
+            <Route path="/mypage" element={<Mypage />} />
           </Route>
 
           <Route element={<LayoutNoNav />}>
@@ -64,7 +66,7 @@ export default function App() {
             <Route path='/reportchoices' element={<ReportChoice />} />
 
             <Route path="/home" element={<Home />} />
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/language" element={<Language />} />
             <Route path="/agree" element={<Agree />} />
@@ -74,11 +76,10 @@ export default function App() {
             <Route path="/joinNation" element={<JoinNation />} />
             <Route path="/join" element={<Join />} />
             <Route path="/interestChoice" element={<InterestChoice />} />
-            <Route path="/matching" element={<Matching />} />
             <Route path="/matched" element={<Matched />} />
             <Route path="/certify" element={<Certify />} />
             <Route path="/yougetReward" element={<Yougetreward />} />
-            <Route path="/mypage" element={<Mypage />} />
+
             <Route path="/modifyInterest" element={<ModifyInterest />} />
             <Route path="/modifyLanguage" element={<ModifyLanguage />} />
           </Route>
@@ -87,7 +88,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-
-
-
-

@@ -1,12 +1,14 @@
 import api from './api';
 
 // 로그인
-export const login = (email, password) => {
-  return api.post(
+export const login = async (email, password) => {
+  const res = await api.post(
     '/auth/login',
     { email, password },
-    { headers: { Authorization: '' } } // 로그인 요청에서는 헤더 제거
+    { headers: { Authorization: '' } } // 로그인 시 기존 토큰 제거
   );
+
+  return res.data; // axios response 전체 말고 data만 반환
 };
 
 //로그아웃
@@ -30,6 +32,6 @@ export const verifyEmailCode = (email, code) => {
 };
 
 // 회원가입
-export const signup = (email, password, nickname) => {
-  return api.post('/auth/signup', { email, password, nickname });
+export const signup = (payload) => {
+  return api.post('/auth/signup', payload);
 };

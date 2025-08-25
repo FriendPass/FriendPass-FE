@@ -56,20 +56,21 @@ function Join_unv() {
   };
 
   // 확인 버튼 클릭
-  const handleConfirm = () => {
-    if (!selectedSchool) {
-      alert('학교를 선택해주세요.');
-      return;
-    }
+const handleConfirm = () => {
+  if (!selectedSchool) {
+    alert('학교를 선택해주세요.');
+    return;
+  }
 
-    const selectedSchoolId = selectedSchool['아이디'];
-    const signupData = JSON.parse(localStorage.getItem('signupData')) || {};
-    signupData.schoolId = selectedSchoolId; // ID 저장
-    localStorage.setItem('signupData', JSON.stringify(signupData));
+  const selectedSchoolId = Number(selectedSchool['아이디']); // 숫자로 변환
+  if (isNaN(selectedSchoolId)) {
+    alert('학교 아이디가 잘못되었습니다.');
+    return;
+  }
 
-    alert(`학교가 선택되었습니다: ${selectedSchool['학교명']}`);
-    navigate('/joinStudent');
-  };
+localStorage.setItem('selectedSchoolId', selectedSchool['아이디']); // 문자열로 저장
+navigate('/joinStudent');
+};
 
 
 
@@ -109,7 +110,7 @@ function Join_unv() {
         >
           {filteredSchools.map((school) => (
             <li
-              key={school}
+              key={school['아이디']}
               onClick={() => handleSelectSchool(school)}
             >
               {school['학교명']}

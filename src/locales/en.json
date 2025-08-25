@@ -73,7 +73,7 @@
       "카페": "Cafe",
       "이색문화체험": "Unique Experiences",
       "쇼핑": "Shopping",
-      "K-pop": "K-pop",
+      "k-pop": "k-pop",
       "역사": "History",
       "패션": "Fashion",
       "힐링": "Healing"
@@ -88,9 +88,11 @@
     "interestsNote": "You can change and set up to 3 interests in settings!",
     "match": "Start Matching",
     "retry": "Rematch",
-    "noInfo": "No matching information yet.\nStart a personalized match based on AI interests!",
+    "noInfo": "No matching information yet.",
+    "noInfo2": "Start a personalized match based on AI interests!",
     "waiting": "Matching result will be available on {{date}}!",
-    "failed": "Matching failed this time.\nIf you want to try again, start rematching below!",
+    "failed": "Matching failed this time.",
+    "failed2": "If you want to try again, start rematching below!",
     "restricted": "Matching is temporarily restricted due to ending.",
     "tryLater": "Please try again later.",
     "selectRegion": "Please select a region first.",
@@ -157,11 +159,11 @@
   }
 },
   "certify": {
-    "title": "Attention!",
-    "line1": "If you end the matching now, it will be restricted for 2 days",
-    "line2": "for abuse prevention.",
-    "line3": "Do you still want to proceed?",
-    "confirmButton": "Confirm and End Matching"
+    "title": "Wait a moment!",
+    "line1": "You cannot end the matching",
+    "line2": "because two days have not passed",
+    "line3": "since the match.",
+    "confirmButton": "Confirm"
   },
     "profile": {
     "title": "Profile Settings",
@@ -203,5 +205,58 @@
       "패션": "Fashion",
       "힐링": "Healing"
     }
+  },
+  "chatInfo": {
+    "roomName": "Chat Room Name",
+    "commonInterests": "Common Interests",
+    "noInterests": "No interest information.",
+    "members": "Matched Members",
+    "loadingMembers": "Loading member information..."
+  },
+  "chatList": {
+    "title": "Chat List",
+    "currentMatch": "Current Match Chat",
+    "previousMatch": "Previous Match Chat"
+  },
+  "liveChat": {
+    "translate": "Show translation",
+    "hideTranslation": "Hide translation",
+    "currentRoom": "Current Match Chat"
+  },
+  "report": {
+    "title": "Why are you reporting?",
+    "categories": {
+      "abuse": "Abuse/Insult",
+      "sexual": "Sexual Harassment/Inappropriate Behavior",
+      "spam": "Spam/Ads",
+      "fraud": "Fraud/Money Request",
+      "offline": "Offline Threat/Risky Behavior",
+      "other": "Other (write directly)"
+    },
+    "otherPlaceholder": "Please enter the details",
+    "submitting": "Submitting...",
+    "submit": "Submit Report",
+    "valid": {
+      "selectCategory": "Please select a reason.",
+      "enterOther": "Please enter the other reason."
+    }
+  },
+  "reportModal": {
+    "confirmText": "Do you want to report this user?"
+  },
+  "reportProfile": {
+    "user": "User",
+    "reportUser": "Report User"
+  },
+  "common": {
+    "confirm": "Confirm"
+  },
+  "ranking": {
+    "title": "Ranking",
+    "myRankTitle": "My Ranking",
+    "allRankTitle": "Overall Ranking",
+    "rank": "Rank {{n}}",
+    "stampsWithSpace": "Reward Stamps {{n}}",
+    "stampsNoSpace": "Reward Stamps{{n}}"
   }
 }

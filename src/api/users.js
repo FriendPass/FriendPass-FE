@@ -1,8 +1,8 @@
 import api from './api';
 
-//초기 관심사 설정
-export const updateUserInterests = (interests) => {
-  return api.put('/users/me/interests', { interests });
+//관심사 PUT
+export const updateUserInterests = (interestIds) => {
+  return api.put('/users/me/interests', { interestIds });
 };
 
 // 회원탈퇴
@@ -22,14 +22,14 @@ export const updateNickname = async (nickname) => {
 };
 
 // 프로필 이미지 업로드
-export const updateProfileImage = async (imageFile) => {
+export const updateProfileImage = async (file) => {
+  console.log("📤 보내는 imageFile 확인:", file instanceof File, file); 
+
   const formData = new FormData();
-  formData.append("imageUrl", imageFile);
+  formData.append("file", file);  // 매개변수 file 사용
 
   const res = await api.put("/users/me/profile-image", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
+    headers: { "Content-Type": "multipart/form-data" }
   });
   return res.data;
 };

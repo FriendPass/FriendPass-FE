@@ -5,10 +5,12 @@ import defaultProfile from '../../assets/img/chat_img/default_profile.png'
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import ReportModal from './ReportModal';
 import axios from 'axios';
+import { useTranslation } from "react-i18next";
 
 const API_BASE = process.env.REACT_APP_CHAT_API;
 
 export default function Profile() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { roomId, userId } = useParams();
     const { state } = useLocation();
@@ -55,11 +57,11 @@ export default function Profile() {
             </div>
             <div className="main">
                 <img className='profile_img' src={profile.profileImage || defaultProfile} alt='' />
-                <span>{profile.nickname || '사용자'}</span>
+                <span>{profile.nickname || t('reportProfile.user')}</span>
             </div>
             <button id="profile_btn" onClick={() => setOpen(true)}>
                 <img src={report} alt="" />
-                <p>사용자 신고하기</p>
+                <p>{t('reportProfile.reportUser')}</p>
             </button>
             <ReportModal openModal={open} closeModal={() => setOpen(false)} payload={payload} />
         </div>

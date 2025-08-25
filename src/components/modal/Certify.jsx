@@ -1,12 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const Certify = ({ onClose, onConfirm }) => {
   const { t } = useTranslation();
-  const handleConfirm = () => {
-    // 종료 후 제한 상태 기록 (localStorage 사용)
-    localStorage.setItem("matchingDisabledUntil", Date.now() + 2 * 24 * 60 * 60 * 1000); // 2일 후
-    onConfirm?.();  // 필요 시 모달 닫기
+  const navigate = useNavigate();
+  
+  const handleConfirm = async () => {
+    onClose(); // 모달 닫기
   };
 
   return (
@@ -19,11 +20,9 @@ const Certify = ({ onClose, onConfirm }) => {
         <p className='certify-p1'>{t('certify.title')}</p>
         <p className='certify-p2'>{t('certify.line1')}<br />{t('certify.line2')}<br />{t('certify.line3')}</p>
       </div>
-      <a href="/matching">
       <div className="certify-box2" onClick={handleConfirm}>
         <p className='certify-p3'>{t('certify.confirmButton')}</p>
       </div>
-      </a>
     </div>
   );
 };

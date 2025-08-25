@@ -68,6 +68,7 @@ const handleConfirm = () => {
 
   // 국가코드만 저장
   localStorage.setItem('selectedNationality', selectedNationality);
+  localStorage.setItem('isExchange', JSON.stringify(true));
   alert(`국적 코드가 저장되었습니다: ${selectedNationality}`);
   navigate('/join'); // 최종 회원가입 페이지로 이동
 };

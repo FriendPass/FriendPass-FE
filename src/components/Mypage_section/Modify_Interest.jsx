@@ -8,8 +8,19 @@ const { t } = useTranslation();
 const [activeIndexes, setActiveIndexes] = React.useState([]); // 배열로 상태 관리
 const navigate = useNavigate();
 
-const buttons = ['전통문화','전시', '맛집','카페','이색문화체험',
-'산책', '쇼핑', 'K-pop', '역사','패션', '힐링'];
+const buttons = [
+  { id: 6, label: '맛집' },
+  { id: 568, label: '이색문화체험' },
+  { id: 12, label: '산책' },
+  { id: 13, label: '쇼핑' },
+  { id: 340, label: 'K-pop' },
+  { id: 17, label: '역사' },
+  { id: 22, label: '패션' },
+  { id: 26, label: '힐링' },
+  { id: 7, label: '카페' },
+  { id: 1, label: '전통문화' },
+  { id: 370, label: '전시' },
+];
 
 const toggleActive = (idx) => {
   if (activeIndexes.includes(idx)) {
@@ -26,16 +37,16 @@ const toggleActive = (idx) => {
 };
 
 //관심사 저장
-  const handleStart = async () => {
-    const selected = activeIndexes.map(i => buttons[i]);
-    try {
-      await updateUserInterests(selected);
-      navigate('/matching');
-    } catch (err) {
-      console.error(err.response?.data || err.message);
-      alert(t('modifyInterest.alertSaveFail'));
-    }
-  };
+const handleStart = async () => {
+  const selectedIds = activeIndexes.map(i => buttons[i].id); // {id,label} 배열 사용
+  try {
+    await updateUserInterests(selectedIds);
+    navigate('/matching');
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    alert(t('modifyInterest.alertSaveFail'));
+  }
+};
 
   return (
     <div className='wrap'>
@@ -54,15 +65,15 @@ const toggleActive = (idx) => {
           <h1>{t('modifyInterest.description3')}</h1>
 </div>
 <div className="interest-choice-box3">
-      {buttons.map((btn, idx) => (
-      <button
-        key={idx}
-        className={`interest-button ${activeIndexes.includes(idx) ? "active" : ""}`}
-        onClick={() => toggleActive(idx)}
-      >
-        {t(`modifyInterest.options.${btn}`)}
-      </button>
-      ))}
+{buttons.map((btn, idx) => (
+  <button
+    key={idx}
+    className={`interest-button ${activeIndexes.includes(idx) ? "active" : ""}`}
+    onClick={() => toggleActive(idx)}
+  >
+    {t(`modifyInterest.options.${btn.label}`)}
+  </button>
+))}
 </div>
 <button className='interest-start' onClick={handleStart}>{t('modifyInterest.startButton')}</button>
     </div>

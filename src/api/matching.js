@@ -1,9 +1,9 @@
 import api from './api';
 
-// 1. 매칭 신청 (POST /matching-requests)
+// 1. 매칭 신청 (POST /matching/request)
 export const requestMatching = async (region) => {
   try {
-    const response = await api.post("/matching-requests", { region });
+    const response = await api.post("/matching/request", { region });
     return response.data;
   } catch (error) {
     console.error("매칭 신청 실패:", error);
@@ -24,13 +24,13 @@ export const getMyMatching = async () => {
 
 // 매칭된 멤버 가져오기
 export const getMyMatchingMember = async () => {
-  const res = await api.get("/matching-requests/me");
+  const res = await api.get("/matching/complete");
   return res.data; // 응답 데이터 그대로 리턴
 };
 // 관심사별 장소 불러오기
 export const getMyMatchingPlaces = async () => {
   try {
-    const response = await api.get('/matching-requests/me');
+    const response = await api.get('/matching/complete');
     return response.data;
   } catch (error) {
     console.error("매칭 장소 가져오기 실패:", error);
@@ -46,5 +46,16 @@ export const certifyLocation = async (latitude, longitude) => {
   } catch (err) {
     console.error("위치 인증 요청 실패:", err);
     throw err;
+  }
+};
+
+// 매칭 종료
+export const exitMatching = async (payload) => {
+  try {
+    const res = await api.post("/matching/exit", payload);
+    return res.data;
+  } catch (error) {
+    console.error("매칭 종료 실패:", error);
+    throw error;
   }
 };

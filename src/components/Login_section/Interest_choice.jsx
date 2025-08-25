@@ -9,7 +9,27 @@ const [activeIndexes, setActiveIndexes] = React.useState([]); // 배열로 상�
 const navigate = useNavigate();
 const { t } = useTranslation();
 
-const buttons = t('interest.options', { returnObjects: true });
+React.useEffect(() => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    alert("로그인 상태가 아닙니다.");
+    navigate("/login");
+  }
+}, [navigate]);
+
+const buttons = [
+  { id: 6, label: '맛집' },
+  { id: 568, label: '이색문화체험' },
+  { id: 12, label: '산책' },
+  { id: 13, label: '쇼핑' },
+  { id: 340, label: 'K-pop' },
+  { id: 17, label: '역사' },
+  { id: 22, label: '패션' },
+  { id: 26, label: '힐링' },
+  { id: 7, label: '카페' },
+  { id: 1, label: '전통문화' },
+  { id: 370, label: '전시' },
+];
 
 const toggleActive = (idx) => {
   if (activeIndexes.includes(idx)) {
@@ -25,17 +45,16 @@ const toggleActive = (idx) => {
   }
 };
 
-//관심사 저장
-  const handleStart = async () => {
-    const selected = activeIndexes.map(i => buttons[i]);
-    try {
-      await updateUserInterests(selected);
-      navigate('/matching');
-    } catch (err) {
-      console.error(err.response?.data || err.message);
-      alert(t('interest.alertFail'));
-    }
-  };
+const handleStart = async () => {
+  const selectedIds = activeIndexes.map(i => buttons[i].id);
+  try {
+    await updateUserInterests(selectedIds); // [6, 568, 12]
+    navigate('/matching');
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    alert(t('interest.alertFail'));
+  }
+};
 
   return (
     <div className='wrap'>
@@ -60,7 +79,7 @@ const toggleActive = (idx) => {
         className={`interest-button ${activeIndexes.includes(idx) ? "active" : ""}`}
         onClick={() => toggleActive(idx)}
       >
-        {btn}
+        {t(`modifyInterest.options.${btn.label}`)}
       </button>
       ))}
 </div>

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { getMyMatching } from "../../api/matching"; // /matching/status
-import Certify from '../modal/Certify'
-import { certifyLocation } from "../../api/matching";
+import { getMyMatchingMember, certifyLocation, exitMatching } from "../../api/matching"; 
+import Certify from '../modal/Certify';
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 
 const Matched = () => {
+  console.log("Matched 컴포넌트 렌더링됨!");
+
   const { t } = useTranslation();
   const [showCertify, setShowCertify] = useState(false);
   const [matchingStatus, setMatchingStatus] = useState(null);
@@ -15,11 +16,37 @@ const Matched = () => {
   const navigate = useNavigate();
   const [locationAgreed, setLocationAgreed] = useState(false);
 
+  // 위치 동의 상태 불러오기
   useEffect(() => {
     const agreed = localStorage.getItem("locationAgreed");
     setLocationAgreed(!!agreed);
   }, []);
 
+  // 매칭 데이터 가져오기
+  useEffect(() => {
+    const fetchMatchingData = async () => {
+      try {
+      const data = await getMyMatchingMember(); // /matching/complete 호출
+      console.log('서버 응답:', data);
+
+      // matchedAt 포함
+      setMatchingStatus({
+        ...data.status,
+        matchedAt: data.matchedAt
+      });
+
+      setSelectedInterests(data.status.selectedInterests || []);
+      setMembers(data.members || []);
+      setRepresentativePlaces(data.representativePlaces || []);
+    } catch (err) {
+      console.error("매칭 데이터 조회 실패:", err);
+    }
+    };
+
+    fetchMatchingData();
+  }, []);
+
+  // 위치 인증 버튼
   const handleRewardClick = () => {
     if (!locationAgreed) {
       alert(t('matched.locationAlert'));
@@ -50,72 +77,39 @@ const Matched = () => {
     );
   };
 
-  useEffect(() => {
-    const fetchMatchingData = async () => {
-      try {
-        const data = await getMyMatching(); // /matching/status
-        const status = data.status || {};
-        const interests = status.selectedInterests || [];
-        const memberList = data.members || [];
-        const places = data.representativePlaces || [];
+  // 종료 버튼
+  const handleEndMatching = async (e) => {
+    e.preventDefault();
+    console.log("matchingStatus 확인:", matchingStatus);
+    if (!matchingStatus?.matchedAt) {
+      alert(t('matched.serverFail'));
+      return;
+    }
 
-        setMatchingStatus(status.status); // "수락" 등
-        setSelectedInterests(interests);
-        setMembers(memberList);
-        setRepresentativePlaces(places);
-      } catch (err) {
-        console.error("매칭 데이터 조회 실패:", err);
-      }
-    };
+    const matchedTime = new Date(matchingStatus.matchedAt);
+    const now = new Date();
+    const diffMs = now - matchedTime; // 밀리초
+    const diffDays = diffMs / (1000 * 60 * 60 * 24); // 일 단위
 
-    fetchMatchingData();
-  }, []);
+  if (diffDays >= 2) {
+    try {
+      console.log('2일 이상 경과 → 서버에 종료 요청 보냄');
 
-  useEffect(() => {
-    // 더미 데이터
-    const dummyData = {
-      status: {
-        status: "수락",
-        region: "성신",
-        selectedInterests: ["맛집", "전통문화", "산책"]
-      },
-      members: [
-        { userId: 3, name: "오" },
-        { userId: 4, name: "비" },
-        { userId: 5, name: "이" },
-        { userId: 1, name: "락" }
-      ],
-      representativePlaces: [
-        {
-          interest: "맛집",
-          places: [
-            { name: "윤휘식당 성신여대본점", address: "서울 성북구 보문로34길 70 2층", description: "함박스테이크와 다양한 일식 반찬을 함께 제공하는 아늑하고 분위기 좋은 식당" },
-            { name: "고향돌김치삼겹살", address: "서울 성북구 보문로32길 44", description: "한돈을 사용한 고기 퀄리티가 뛰어나며, 삼겹살, 목살, 항정살 모두 기름기와 살코기의 황금비율을 가진 식당" }
-          ]
-        },
-        {
-          interest: "전통문화",
-          places: [
-            { name: "동소문한옥밀집지역", address: "서울 성북구 동소문동2가 43-1", description: "한옥들이 밀집해 있는 한옥 거리" },
-            { name: "한상수자수박물관", address: "서울 성북구 성북로16길 4-10", description: "국가무형문화재 자수장 기능 보유자로, 자수 문화를 알 수 있는 곳" }
-          ]
-        },
-        {
-          interest: "산책",
-          places: [
-            { name: "성북천", address: "서울 성북구 동선동2가", description: "물길과 나무가 조화를 이루어 사계절 내내 휴식을 즐기기 좋은 도심 속 개천" },
-            { name: "고려대학교 서울캠퍼스 본관", address: "서울 성북구 안암로 145", description: "우리나라 최초의 근대적 사립 고등교육기관으로, 산책하기 좋은 고딕양식의 캠퍼스" }
-          ]
-        }
-      ]
-    };
+      // api.js에 있는 exitMatching 호출
+      const res = await exitMatching({ team: { teamId: matchingStatus.teamId } }); // payload가 필요 없으면 빈 객체
+      console.log('서버 응답 데이터:', res);
 
-    // 상태 세팅
-    setMatchingStatus(dummyData.status.status);
-    setSelectedInterests(dummyData.status.selectedInterests);
-    setMembers(dummyData.members);
-    setRepresentativePlaces(dummyData.representativePlaces);
-  }, []);
+      console.log('매칭 종료 성공 → /matching 페이지로 이동');
+      navigate('/matching');
+    } catch (err) {
+      console.error('매칭 종료 요청 실패:', err);
+      alert(t('matched.serverFail'));
+    }
+  } else {
+    console.log('2일 미만 → 모달 표시');
+    setShowCertify(true);
+  }
+  };
 
   return (
     <div className='wrap'>
@@ -184,39 +178,43 @@ const Matched = () => {
                       <img
                         src={m.profileImage || "/default.png"}
                         alt=""
-                        style={{ width: "30px", height: "30px", borderRadius: "50%" }}
+                        style={{ width: "30px", height: "30px", borderRadius: "5px" }}
                       />
                       <p className="matching-p4">{m.name}</p>
                     </div>
                   ))
                 )}
           </div>
-          <div className="matched-exit">
-          <button onClick={() => setShowCertify(true)}>{t('matched.endMatching')}</button>
-          {showCertify && (
-  <div className="modal-overlay">
-    <div className="modal-content">
-      <Certify onClose={() => setShowCertify(false)} />
+<div className="matched-exit">
+  <button type="button" onClick={handleEndMatching}>
+    {t('matched.endMatching')}
+  </button>
+
+  {showCertify && (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <Certify onClose={() => setShowCertify(false)} />
+      </div>
     </div>
-  </div>
-)}
-          </div>
+  )}
+</div>
           </div>
         </div>
       </div>
     </div>
+
             <div className="matched2-footer">
         <div className='matched-footer'>
         <div className="menu-home">
           <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M15 2.5L18.8625 10.325L27.5 11.5875L21.25 17.675L22.725 26.275L15 22.2125L7.275 26.275L8.75 17.675L2.5 11.5875L11.1375 10.325L15 2.5Z" fill="#6177F0" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M15 2.5L18.8625 10.325L27.5 11.5875L21.25 17.675L22.725 26.275L15 22.2125L7.275 26.275L8.75 17.675L2.5 11.5875L11.1375 10.325L15 2.5Z" fill="#6177F0" stroke="black" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
 <p>{t("menu.matching")}</p> 
         </div>
         <a href="/chatList">
         <div className="menu-chat">
           <svg width="34" height="29" viewBox="0 0 34 29" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M29.75 13.8958C29.7549 15.4906 29.318 17.0639 28.475 18.4875C27.4754 20.1933 25.9388 21.6281 24.0372 22.6312C22.1356 23.6342 19.9442 24.1659 17.7083 24.1666C15.8385 24.1708 13.994 23.7982 12.325 23.0791L4.25 25.375L6.94167 18.4875C6.09865 17.0639 5.66179 15.4906 5.66667 13.8958C5.66753 11.9888 6.29087 10.1196 7.46685 8.49764C8.64284 6.87569 10.325 5.56503 12.325 4.71247C13.994 3.99343 15.8385 3.62082 17.7083 3.62497H18.4167C21.3695 3.76392 24.1585 4.82698 26.2496 6.61059C28.3408 8.39421 29.5871 10.7731 29.75 13.2916V13.8958Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M29.75 13.8958C29.7549 15.4906 29.318 17.0639 28.475 18.4875C27.4754 20.1933 25.9388 21.6281 24.0372 22.6312C22.1356 23.6342 19.9442 24.1659 17.7083 24.1666C15.8385 24.1708 13.994 23.7982 12.325 23.0791L4.25 25.375L6.94167 18.4875C6.09865 17.0639 5.66179 15.4906 5.66667 13.8958C5.66753 11.9888 6.29087 10.1196 7.46685 8.49764C8.64284 6.87569 10.325 5.56503 12.325 4.71247C13.994 3.99343 15.8385 3.62082 17.7083 3.62497H18.4167C21.3695 3.76392 24.1585 4.82698 26.2496 6.61059C28.3408 8.39421 29.5871 10.7731 29.75 13.2916V13.8958Z" stroke="#1E1E1E" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
 <p>{t("menu.chat")}</p>
         </div>
@@ -224,7 +222,7 @@ const Matched = () => {
         <a href="/ranking">
         <div className="menu-lank">
           <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10.6045 17.9413L9.04159 29.7084L15.4999 25.8334L21.9583 29.7084L20.3953 17.9284M24.5416 10.3334C24.5416 15.3269 20.4935 19.375 15.4999 19.375C10.5063 19.375 6.45825 15.3269 6.45825 10.3334C6.45825 5.33978 10.5063 1.29169 15.4999 1.29169C20.4935 1.29169 24.5416 5.33978 24.5416 10.3334Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10.6045 17.9413L9.04159 29.7084L15.4999 25.8334L21.9583 29.7084L20.3953 17.9284M24.5416 10.3334C24.5416 15.3269 20.4935 19.375 15.4999 19.375C10.5063 19.375 6.45825 15.3269 6.45825 10.3334C6.45825 5.33978 10.5063 1.29169 15.4999 1.29169C20.4935 1.29169 24.5416 5.33978 24.5416 10.3334Z" stroke="#1E1E1E" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
 <p>{t("menu.ranking")}</p>
         </div>
@@ -232,13 +230,14 @@ const Matched = () => {
         <a href="/mypage">
         <div className="menu-mypage">
           <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M25.8333 27.125V24.5417C25.8333 23.1714 25.2889 21.8572 24.32 20.8883C23.3511 19.9193 22.0369 19.375 20.6666 19.375H10.3333C8.96301 19.375 7.64885 19.9193 6.67991 20.8883C5.71097 21.8572 5.16663 23.1714 5.16663 24.5417V27.125M20.6666 9.04167C20.6666 11.8951 18.3534 14.2083 15.5 14.2083C12.6465 14.2083 10.3333 11.8951 10.3333 9.04167C10.3333 6.1882 12.6465 3.875 15.5 3.875C18.3534 3.875 20.6666 6.1882 20.6666 9.04167Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M25.8333 27.125V24.5417C25.8333 23.1714 25.2889 21.8572 24.32 20.8883C23.3511 19.9193 22.0369 19.375 20.6666 19.375H10.3333C8.96301 19.375 7.64885 19.9193 6.67991 20.8883C5.71097 21.8572 5.16663 23.1714 5.16663 24.5417V27.125M20.6666 9.04167C20.6666 11.8951 18.3534 14.2083 15.5 14.2083C12.6465 14.2083 10.3333 11.8951 10.3333 9.04167C10.3333 6.1882 12.6465 3.875 15.5 3.875C18.3534 3.875 20.6666 6.1882 20.6666 9.04167Z" stroke="#1E1E1E" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
 <p>{t("menu.mypage")}</p>
         </div>
         </a>
         </div>
       </div>
+
       </div>
     </div>
   )
