@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import back from '../../assets/img/chat_img/back_arrow.png'
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import defaultProfile from '../../assets/img/chat_img/default_profile.png'
 import { useTranslation } from "react-i18next";
@@ -12,6 +12,8 @@ export default function Info() {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { roomId } = useParams();
+    const location = useLocation();
+    const [teamId, setTeamId] = useState(null);
 
     const rid = String(roomId ?? '').split(':')[0]; // "1:1" -> "1"
     const ROOMS_URL = `${API_BASE}/rooms/${encodeURIComponent(rid)}`;
@@ -76,24 +78,35 @@ export default function Info() {
             headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
         })
             .then(({ data }) => {
-                // { roomId, teamId, roomName, commonInterests:[{interestId, name}], teammates:[{userId, nickname, profileImage?}] }
+                // { roomId, teamId(NEW), roomName, commonInterests:[{interestId, name}], teammates:[{userId, nickname, profileImage}] }
                 setName(data?.roomName ?? t('chatInfo.roomName'));
 
+                // NEW: teamId 반영
+                if (data?.teamId != null) setTeamId(data.teamId);
+
                 const interests = Array.isArray(data?.commonInterests)
-                    ? data.commonInterests.map(i => i?.name ?? String(i))
+                    ? data.commonInterests.map(i => i?.name).filter(Boolean)
                     : [];
                 setSelectedInterests(interests);
 
-                const team = Array.isArray(data?.teammates) ? data.teammates : [];
+                // profileImage 안전 처리(fallback 포함)
+                const team = Array.isArray(data?.teammates)
+                    ? data.teammates.map(m => ({
+                        userId: m?.userId,
+                        nickname: m?.nickname,
+                        profileImage: m?.profileImage || m?.profileImageUrl || '' // 혹시 필드명이 달라도 대비
+                    }))
+                    : [];
                 setMembers(team);
 
+                console.log('team', team);
                 console.log('채팅 정보 조회 완료');
             })
             .catch((error) => {
                 console.error('채팅 정보 axios 오류', error);
             });
         // 의존성 최소화
-    }, [rid]);
+    }, [rid, location.key]);
 
     const goProfile = (m) => {
         navigate(`/chat/${rid}/member/${m.userId}`, {

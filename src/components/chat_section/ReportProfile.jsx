@@ -7,6 +7,15 @@ import ReportModal from './ReportModal';
 import axios from 'axios';
 import { useTranslation } from "react-i18next";
 
+const getAuthHeaders = () => {
+    const raw = localStorage.getItem('accessToken');
+    const token =
+        raw && raw.startsWith('"') && raw.endsWith('"') ? raw.slice(1, -1) : raw;
+    if (!token) return {};
+    const value = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+    return { Authorization: value, 'Content-Type': 'application/json' };
+};
+
 const API_BASE = process.env.REACT_APP_CHAT_API;
 
 export default function Profile() {
@@ -14,14 +23,15 @@ export default function Profile() {
     const navigate = useNavigate();
     const { roomId, userId } = useParams();
     const { state } = useLocation();
+    const rid = String(roomId ?? '').split(':')[0];
 
     const payload = {
-        reportedUserID: Number(userId),            // 프로필 대상 유저 ID
-        chatId: Number(roomId),                    // 현재 채팅방 ID
+        reportedUserID: Number(userId),
+        chatId: Number(roomId),
     };
 
-    const goBack = () => {
-        navigate(-1);
+    const goInfo = () => {
+        navigate(`/chat/${rid}/info`);
     }
     const [open, setOpen] = useState(false);
     const [profile, setProfile] = useState({
@@ -35,7 +45,9 @@ export default function Profile() {
 
         const INFO_URL = `${API_BASE}/rooms/${roomId}`;
         axios
-            .get(INFO_URL)
+            .get(INFO_URL, {
+                headers: getAuthHeaders(),
+            })
             .then(({ data }) => {
                 const list = Array.isArray(data?.teammates) ? data.teammates : [];
                 const found =
@@ -53,7 +65,7 @@ export default function Profile() {
     return (
         <div className="Profile wrap">
             <div className="header">
-                <img onClick={goBack} src={Delete} alt="" />
+                <img onClick={goInfo} src={Delete} alt="" />
             </div>
             <div className="main">
                 <img className='profile_img' src={profile.profileImage || defaultProfile} alt='' />

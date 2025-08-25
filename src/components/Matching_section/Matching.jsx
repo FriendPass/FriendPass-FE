@@ -18,37 +18,7 @@ function Matching() {
   const displayRegions = ["국민", "성신", "동덕"].map(r => t(`region.${r}`)); 
   const displayInterests = interests.map(i => t(`matching.interests.${i}`)); 
 
-  //  Utils: 2일 제한 체크 & 남은시간 표시 
-  /*const updateDisabledFromStorage = () => {
-    const until = localStorage.getItem("matchingDisabledUntil");
-    if (!until) {
-      setIsDisabled(false);
-      return;
-    }
-    const ts = parseInt(until, 10);
-    if (Number.isFinite(ts) && Date.now() < ts) {
-      setIsDisabled(true);
-    } else {
-      setIsDisabled(false);
-      const oneMinute = 5 * 60 * 1000;
-localStorage.setItem("matchingDisabledUntil", Date.now() + oneMinute);
-    }
-  };
 
-  const getRemainingText = () => {
-    const until = localStorage.getItem("matchingDisabledUntil");
-    if (!until) return "";
-    const ms = parseInt(until, 10) - Date.now();
-    if (ms <= 0) return "";
-    const totalMin = Math.ceil(ms / (60 * 1000));
-    const days = Math.floor(totalMin / (24 * 60));
-    const hours = Math.floor((totalMin % (24 * 60)) / 60);
-    const mins = totalMin % 60;
-    if (days > 0) return `${days}d ${hours}h ${mins}m`;
-    if (hours > 0) return `${hours}h ${mins}m`;
-    return `${mins}m`;
-  };
-*/
   // 페이지 로드 시 위치 정보 동의 여부 확인
     useEffect(() => {
     const agreed = localStorage.getItem("locationAgreed");
@@ -61,55 +31,35 @@ localStorage.setItem("matchingDisabledUntil", Date.now() + oneMinute);
 useEffect(() => {
   const fetchMatching = async () => {
     try {
-      const data = await getMyMatching();
+      const statusData = await getMyMatching();
+      setStatus(statusData.status || "none");
+      setInterests(statusData.selectedInterests || []);
 
-      // 1. 기존 status 세팅
-        setStatus(data.status || "none");
-        setInterests(data.selectedInterests || []);
+      if (statusData.region) {
+        setSelectedRegion(statusData.region);
+        localStorage.setItem("selectedRegion", statusData.region);
+      }
 
-        // region이 있으면 선택 반영
-        if (data.region) {
-          setSelectedRegion(data.region);
-          localStorage.setItem("selectedRegion", data.region);
-        }
-      // 매칭 시간 계산 (대기중이면 현재 시간 기준)
-      if (data.status === "대기중") {
+      if (statusData.status === "대기중") {
         const roundedTime = roundToNext30Min(new Date());
         const formatted = `${roundedTime.getHours()}시 ${roundedTime.getMinutes() === 0 ? '00' : '30'}분`;
         setMatchDate(formatted);
       }
-        // 제한시간 초과 체크 (예시: 24시간)
-        /*if (data.matchedAt) {
-          const matchedTime = new Date(data.matchedAt).getTime();
-          const now = Date.now();
-          const oneDay = 24 * 60 * 60 * 1000;
-          if (now - matchedTime > oneDay) {
-            setStatus("failed");
-            setSelectedRegion(null); // 버튼 색 초기화
-            localStorage.removeItem("selectedRegion");
-          }
-        }*/
 
-      // 2️⃣ 매칭 완료 여부 조회
+      // 👉 여기서 complete 데이터로 navigate 판단
       const completeData = await getMyMatchingMember();
-        // ✅ 매칭 상태가 진행중일 때만 Matched로 이동
-        if ((status === "progress" || data.status === "수락") && completeData?.members?.length > 0) {
-          navigate("/matched");
-        }
+      if (completeData?.members?.length > 0) {
+        navigate("/matched");
+      }
 
     } catch (err) {
       console.error("매칭 상태 조회 실패:", err);
     }
   };
 
-    //updateDisabledFromStorage(); 
-    fetchMatching();
-    // 탭에 다시 포커스될 때 제한 갱신
-    /*const onFocus = () => updateDisabledFromStorage();
-    window.addEventListener("focus", onFocus);
-    return () => window.removeEventListener("focus", onFocus);*/
+  fetchMatching();
+}, [navigate]);
 
-  }, [navigate, status]);
 
   const handleAgree = () => {
     localStorage.setItem("locationAgreed", "true");
@@ -130,13 +80,6 @@ useEffect(() => {
 
   // 매칭 신청 / 재매칭
   const handleMatchingClick = async () => {
-   /* updateDisabledFromStorage();
-    if (isDisabled) {
-      const remain = getRemainingText();
-       alert(`${t('matching.restricted')}\n${getRemainingText() || t('matching.tryLater')}`);
-      return;
-    }
-*/
     if (!selectedRegion) {
       alert(t('matching.selectRegion'));
       return;

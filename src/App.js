@@ -56,7 +56,7 @@ export default function App() {
           <Route element={<LayoutNoNav />}>
             <Route path="/chat/:roomId" element={<LiveChat />} />
             <Route path="/chat/:roomId/info" element={<ChatInfo />} />
-            <Route path="/member/:userId" element={<ReportProfile />} />
+            <Route path="/chat/:roomId/member/:userId" element={<ReportProfile />} />
             <Route path='/reportchoices' element={<ReportChoice />} />
 
             <Route path="/" element={<Login />} />

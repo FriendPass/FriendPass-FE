@@ -44,10 +44,12 @@ export default function LiveChat() {
           headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
         });
         if (!alive) return;
-        const arr = Array.isArray(data) ? data : [];
-        seenIdsRef.current = new Set(
-          arr.filter(m => m?.id != null).map(m => String(m.id))
-        );
+    const arr = Array.isArray(data) ? data : [];
+arr.sort((a, b) => new Date(a.sentAt) - new Date(b.sentAt)); // 정렬 추가
+seenIdsRef.current = new Set(
+  arr.filter(m => m?.id != null).map(m => String(m.id))
+);
+        
         setMessages(arr);
         arr.forEach(m => { if (m?.id) seenIdsRef.current.add(m.id); });
       } catch (e) {
@@ -167,7 +169,7 @@ export default function LiveChat() {
       <div className="main">
         <div className="messages" ref={listRef}>
           {messages.map((m) => {
-            const isMine = m.senderId === userId;
+            const isMine = Number(m.senderId) === Number(userId);
             return (
               <div className={`msg ${isMine ? 'mine' : 'theirs'}`} key={m.id ?? `${m.ts}-${m.message}`}>
                 {!isMine && <div className="writer" title={m.senderNickname}>

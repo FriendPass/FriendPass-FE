@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Delete from '../../assets/img/chat_img/delete.png'
 import axios from 'axios'
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 
 const API_BASE = process.env.REACT_APP_BASE;
@@ -24,6 +24,7 @@ const CATEGORY_MAP = {
 
 export default function ReportChoice() {
     const { t, i18n } = useTranslation();
+    const { roomId } = useParams();
     const navigate = useNavigate();
     const { state } = useLocation();
 
@@ -31,13 +32,27 @@ export default function ReportChoice() {
     const chatId = state?.chatId ?? null;
     const messageId = state?.messageId ?? null;
 
+    const rid = String(roomId ?? '').split(':')[0];
+
     const [category, setCategory] = useState('');
     const [reason, setReason] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
-    const goBack = () => {
-        navigate('/reportprofile');
+    const goInfo = () => {
+        navigate(`/chat/${rid}/info`);
     }
+
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+        alert('로그인이 필요합니다.');
+        return;
+    }
+    const headers = {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+    };
+
 
     const handleChoiceClick = (e) => {
         const block = e.target.closest('.block, .block2');
@@ -63,29 +78,58 @@ export default function ReportChoice() {
             return;
         }
 
+        // 1) 인증 헤더
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            alert('로그인이 필요합니다.');
+            return;
+        }
+        const headers = {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+        };
+
+        // 2) 3) payload 정리: camelCase + 숫자화 + null 필드 제거
         const payload = {
-            reportedUserID,
-            chatId,
-            messageId,
+            reportedUserId: reportedUserID != null ? Number(reportedUserID) : undefined,
+            chatId: chatId != null ? Number(chatId) : undefined,
             reasonCategory,
             reasonText: reason.trim() || null,
         };
+        if (messageId != null) payload.messageId = Number(messageId);
+
+        // undefined/null 필드 제거(서버가 null/undefined를 싫어할 수 있음)
+        Object.keys(payload).forEach((k) => {
+            if (payload[k] === undefined || payload[k] === null) delete payload[k];
+        });
+
+        // 디버깅: 지금 보내는 바디 확인
+        console.log('POST /reports payload =>', payload);
 
         setSubmitting(true);
-
-        axios.post(Report_URL, payload)
+        axios.post(Report_URL, payload, { headers })
             .then(() => {
                 console.log("신고 작성 완료");
                 navigate('/chatInfo', { replace: true });
             })
             .catch((error) => {
-                console.error("신고 axios 오류", error);
-            });
-    }
+                console.error(
+                    '신고 axios 오류',
+                    error?.response?.status,
+                    error?.response?.data
+                );
+                alert(
+                    error?.response?.data?.message ||
+                    `신고 실패: ${error?.response?.status || ''}`
+                );
+            })
+            .finally(() => setSubmitting(false));
+    };
     return (
         <div className="ReportChoice wrap">
             <div className="header">
-                <img onClick={goBack} src={Delete} alt="" />
+                <img onClick={goInfo} src={Delete} alt="" />
             </div>
             <div className="main">
                 <h1>{t('report.title')}</h1>
