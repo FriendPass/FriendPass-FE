@@ -23,28 +23,23 @@ const Matched = () => {
   }, []);
 
   // 매칭 데이터 가져오기
-  useEffect(() => {
-    const fetchMatchingData = async () => {
-      try {
-      const data = await getMyMatchingMember(); // /matching/complete 호출
-      console.log('서버 응답:', data);
+useEffect(() => {
+  const fetchMatchingData = async () => {
+    try {
+      const data = await getMyMatchingMember();
+      if (!data || !data.status) return;
 
-      // matchedAt 포함
-      setMatchingStatus({
-        ...data.status,
-        matchedAt: data.matchedAt
-      });
-
+      setMatchingStatus({...data.status, matchedAt: data.matchedAt});
       setSelectedInterests(data.status.selectedInterests || []);
       setMembers(data.members || []);
       setRepresentativePlaces(data.representativePlaces || []);
     } catch (err) {
       console.error("매칭 데이터 조회 실패:", err);
     }
-    };
+  };
 
-    fetchMatchingData();
-  }, []);
+  fetchMatchingData();
+}, []);
 
   // 위치 인증 버튼
   const handleRewardClick = () => {
@@ -98,8 +93,8 @@ const Matched = () => {
       // api.js에 있는 exitMatching 호출
       const res = await exitMatching({ team: { teamId: matchingStatus.teamId } }); // payload가 필요 없으면 빈 객체
       console.log('서버 응답 데이터:', res);
-
       console.log('매칭 종료 성공 → /matching 페이지로 이동');
+
       navigate('/matching');
     } catch (err) {
       console.error('매칭 종료 요청 실패:', err);

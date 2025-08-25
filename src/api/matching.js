@@ -27,16 +27,6 @@ export const getMyMatchingMember = async () => {
   const res = await api.get("/matching/complete");
   return res.data; // 응답 데이터 그대로 리턴
 };
-// 관심사별 장소 불러오기
-export const getMyMatchingPlaces = async () => {
-  try {
-    const response = await api.get('/matching/complete');
-    return response.data;
-  } catch (error) {
-    console.error("매칭 장소 가져오기 실패:", error);
-    throw error;
-  }
-};
 
 // 사용자 위치 인증
 export const certifyLocation = async (latitude, longitude) => {

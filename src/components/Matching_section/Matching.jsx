@@ -92,10 +92,10 @@ useEffect(() => {
 
       // 2️⃣ 매칭 완료 여부 조회
       const completeData = await getMyMatchingMember();
-      if (completeData?.members?.length > 0) {
-        // 완료된 매칭이 있으면 바로 matched 페이지로 이동
-        navigate("/matched");
-      }
+        // ✅ 매칭 상태가 진행중일 때만 Matched로 이동
+        if ((status === "progress" || data.status === "수락") && completeData?.members?.length > 0) {
+          navigate("/matched");
+        }
 
     } catch (err) {
       console.error("매칭 상태 조회 실패:", err);
@@ -109,7 +109,7 @@ useEffect(() => {
     window.addEventListener("focus", onFocus);
     return () => window.removeEventListener("focus", onFocus);*/
 
-  }, [navigate]);
+  }, [navigate, status]);
 
   const handleAgree = () => {
     localStorage.setItem("locationAgreed", "true");
