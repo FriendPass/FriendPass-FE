@@ -39,11 +39,6 @@ function useUserId() {
   }, []);
 }
 
-function LiveChatPage({ userId }) {
-  const { roomId } = useParams();
-  return <LiveChat roomId={roomId} userId={userId} />;
-}
-
 export default function App() {
   const userId = useUserId();
 
@@ -61,8 +56,8 @@ export default function App() {
           </Route>
 
           <Route element={<LayoutNoNav />}>
-            <Route path="/chat/:roomId" element={<LiveChatPage />} />
-            <Route path="/chatInfo" element={<ChatInfo />} />
+            <Route path="/chat/:roomId" element={<LiveChat />} />
+            <Route path="/chat/:roomId/info" element={<ChatInfo />} />
             <Route path="/member/:userId" element={<ReportProfile />} />
             <Route path='/reportchoices' element={<ReportChoice />} />
 

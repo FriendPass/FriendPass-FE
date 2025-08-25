@@ -9,7 +9,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  localStorage.removeItem('accessToken')
+  /*localStorage.removeItem('accessToken')*/
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -18,6 +18,7 @@ function Login() {
       // 로그인 성공 시 토큰과 사용자 정보 저장
       const { accessToken, user: userData } = res.data;
       localStorage.setItem('accessToken', accessToken);
+      window.dispatchEvent(new Event('auth-updated'));
 
       console.log('로그인 성공:', res.data);
       navigate('/matching');
