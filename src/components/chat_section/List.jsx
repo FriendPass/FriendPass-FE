@@ -33,6 +33,7 @@ export default function List() {
     const [previous, setPrevious] = useState([]);
 
     useEffect(() => {
+        console.log('[ChatList] effect fired. LIST_URL =', LIST_URL);
         axios.get(LIST_URL, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('accessToken')}`

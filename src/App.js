@@ -13,7 +13,6 @@ import LayoutNoNav from './components/nav_section/LayoutNoNav'
 import LayoutwithNav from './components/nav_section/LayoutwithNav'
 import ReportChoice from './components/chat_section/ReportChoice';
 
-import Home from './components/Home';
 import Login from './components/Login_section/Login';
 import JoinStudent from './components/Login_section/Join_student';
 import JoinUnv from './components/Login_section/Join_unv';
@@ -39,11 +38,6 @@ function useUserId() {
   }, []);
 }
 
-function LiveChatPage({ userId }) {
-  const { roomId } = useParams();
-  return <LiveChat roomId={roomId} userId={userId} />;
-}
-
 export default function App() {
   const userId = useUserId();
 
@@ -60,12 +54,11 @@ export default function App() {
           </Route>
 
           <Route element={<LayoutNoNav />}>
-            <Route path="/chat/:roomId" element={<LiveChatPage />} />
-            <Route path="/chatInfo" element={<ChatInfo />} />
+            <Route path="/chat/:roomId" element={<LiveChat />} />
+            <Route path="/chat/:roomId/info" element={<ChatInfo />} />
             <Route path="/member/:userId" element={<ReportProfile />} />
             <Route path='/reportchoices' element={<ReportChoice />} />
 
-            <Route path="/home" element={<Home />} />
             <Route path="/" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/language" element={<Language />} />
